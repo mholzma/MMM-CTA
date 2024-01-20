@@ -1,4 +1,4 @@
-> [!CRITICAL]
+> [!CAUTION]
 > This module is still in development and is not ready for use.
 
 # MMM-CTA
