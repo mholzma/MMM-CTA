@@ -17,7 +17,7 @@ git clone https://github.com/JHWelch/MMM-CTA.git
 Install NPM dependencies
 ```sh
 cd MMM-CTA
-npm install
+npm install --production
 ```
 
 ## Using the module
@@ -46,6 +46,12 @@ var config = {
 | `updateInterval` | *Optional*   | Refresh time in milliseconds <br>Default 60000 milliseconds (1 minute) |
 
 ## Development
+
+### Installation
+
+```sh
+npm install
+```
 
 ### Testing
 
