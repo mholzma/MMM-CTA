@@ -17,6 +17,17 @@ describe('MMM-CTA', () => {
     MMMCTA.setData({ name, identifier: `Module_1_${name}` });
   });
 
+  it('has a default config', () => {
+    expect(MMMCTA.defaults).toEqual({
+      updateInterval: 60000,
+      trainApiKey: null,
+      busApiKey: null,
+      maxResultsTrain: 5,
+      maxResultsBus: 5,
+      stops: [],
+    });
+  });
+
   it('requires expected version', () => {
     expect(MMMCTA.requiresVersion).toBe('2.2.0');
   });

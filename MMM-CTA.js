@@ -10,6 +10,11 @@
 Module.register('MMM-CTA', {
   defaults: {
     updateInterval: 60000,
+    trainApiKey: null,
+    busApiKey: null,
+    maxResultsTrain: 5,
+    maxResultsBus: 5,
+    stops: [],
   },
 
   requiresVersion: '2.2.0',
