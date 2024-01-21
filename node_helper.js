@@ -28,14 +28,31 @@ module.exports = NodeHelper.create({
     maxResultsBus,
     stops,
   }) {
-    const response = await fetch(
-      this.trainUrl(stops[0].stopId, maxResultsTrain, trainApiKey),
-      this.requestInit(),
-    );
+    const responses = stops.map(async (stop) => {
+      if (stop.type === 'train') {
+        return this.getTrainData(stop.stopId, maxResultsTrain, trainApiKey);
+      }
+
+      return this.getBusData(stop.stopId, maxResultsBus, busApiKey);
+    });
 
     // const { aqi } = (await response.json()).data;
 
     // this.sendSocketNotification('MMM-CTA-DATA', { aqi });
+  },
+
+  getBusData(stopId, maxResults, apiKey) {
+    return fetch(
+      this.busUrl(stopId, maxResults, apiKey),
+      this.requestInit(),
+    );
+  },
+
+  getTrainData(stopId, maxResults, apiKey) {
+    return fetch(
+      this.trainUrl(stopId, maxResults, apiKey),
+      this.requestInit(),
+    );
   },
 
   requestInit() {
@@ -60,6 +77,12 @@ module.exports = NodeHelper.create({
     });
 
     return valid;
+  },
+
+  busUrl(stopId, maxResults, apiKey) {
+    const baseUrl = 'http://www.ctabustracker.com/bustime/api/v2/getpredictions';
+
+    return `${baseUrl}?key=${apiKey}&stpid=${stopId}&top=${maxResults}&format=json`;
   },
 
   trainUrl(stopId, maxResults, apiKey) {
