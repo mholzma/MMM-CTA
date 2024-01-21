@@ -1,145 +1,143 @@
 /* eslint-disable global-require */
-describe('MMM-CTA', () => {
-  beforeAll(() => {
-    require('../__mocks__/Module');
-    require('../__mocks__/globalLogger');
+beforeAll(() => {
+  require('../__mocks__/Module');
+  require('../__mocks__/globalLogger');
+});
+
+const name = 'MMM-CTA';
+
+let MMMCTA;
+
+beforeEach(() => {
+  jest.resetModules();
+  require('../MMM-CTA');
+
+  MMMCTA = global.Module.create(name);
+  MMMCTA.setData({ name, identifier: `Module_1_${name}` });
+});
+
+it('has a default config', () => {
+  expect(MMMCTA.defaults).toEqual({
+    updateInterval: 60000,
+    trainApiKey: null,
+    busApiKey: null,
+    maxResultsTrain: 5,
+    maxResultsBus: 5,
+    stops: [],
   });
+});
 
-  const name = 'MMM-CTA';
+it('requires expected version', () => {
+  expect(MMMCTA.requiresVersion).toBe('2.2.0');
+});
 
-  let MMMCTA;
+describe('defaults', () => {
+  test('updateInterval', () => {
+    expect(MMMCTA.defaults.updateInterval).toBe(60000);
+  });
+});
+
+it('inits module in loading state', () => {
+  expect(MMMCTA.loading).toBe(true);
+});
+
+describe('start', () => {
+  const originalInterval = setInterval;
+  const configObject = {
+    token: 'mock_token',
+    city: 'chicago',
+  };
 
   beforeEach(() => {
-    jest.resetModules();
-    require('../MMM-CTA');
-
-    MMMCTA = global.Module.create(name);
-    MMMCTA.setData({ name, identifier: `Module_1_${name}` });
+    MMMCTA.setConfig(configObject);
+    global.setInterval = jest.fn();
   });
 
-  it('has a default config', () => {
-    expect(MMMCTA.defaults).toEqual({
-      updateInterval: 60000,
-      trainApiKey: null,
-      busApiKey: null,
-      maxResultsTrain: 5,
-      maxResultsBus: 5,
-      stops: [],
-    });
+  afterEach(() => {
+    global.setInterval = originalInterval;
   });
 
-  it('requires expected version', () => {
-    expect(MMMCTA.requiresVersion).toBe('2.2.0');
+  test('logs start of module', () => {
+    MMMCTA.start();
+
+    expect(global.Log.info).toHaveBeenCalledWith('Starting module: MMM-CTA');
   });
 
-  describe('defaults', () => {
-    test('updateInterval', () => {
-      expect(MMMCTA.defaults.updateInterval).toBe(60000);
-    });
+  test('requests data from node_helper with config variables', () => {
+    MMMCTA.start();
+
+    expect(MMMCTA.sendSocketNotification)
+      .toHaveBeenCalledWith('MMM-CTA-FETCH', configObject);
   });
 
-  it('inits module in loading state', () => {
-    expect(MMMCTA.loading).toBe(true);
+  test('interval requests data from node_helper', () => {
+    MMMCTA.start();
+    global.setInterval.mock.calls[0][0]();
+
+    expect(MMMCTA.sendSocketNotification).toHaveBeenCalledTimes(2);
+    expect(MMMCTA.sendSocketNotification)
+      .toHaveBeenCalledWith('MMM-CTA-FETCH', configObject);
   });
 
-  describe('start', () => {
-    const originalInterval = setInterval;
-    const configObject = {
-      token: 'mock_token',
-      city: 'chicago',
-    };
+  test('interval set starts with default value', () => {
+    MMMCTA.setConfig({ updateInterval: 100000 });
+    MMMCTA.start();
 
-    beforeEach(() => {
-      MMMCTA.setConfig(configObject);
-      global.setInterval = jest.fn();
-    });
+    expect(global.setInterval)
+      .toHaveBeenCalledWith(expect.any(Function), 100000);
+  });
+});
 
-    afterEach(() => {
-      global.setInterval = originalInterval;
-    });
+describe('getTemplate', () => {
+  it('returns template path', () => {
+    expect(MMMCTA.getTemplate()).toBe('templates/MMM-CTA.njk');
+  });
+});
 
-    test('logs start of module', () => {
-      MMMCTA.start();
-
-      expect(global.Log.info).toHaveBeenCalledWith('Starting module: MMM-CTA');
-    });
-
-    test('requests data from node_helper with config variables', () => {
-      MMMCTA.start();
-
-      expect(MMMCTA.sendSocketNotification)
-        .toHaveBeenCalledWith('MMM-CTA-FETCH', configObject);
-    });
-
-    test('interval requests data from node_helper', () => {
-      MMMCTA.start();
-      global.setInterval.mock.calls[0][0]();
-
-      expect(MMMCTA.sendSocketNotification).toHaveBeenCalledTimes(2);
-      expect(MMMCTA.sendSocketNotification)
-        .toHaveBeenCalledWith('MMM-CTA-FETCH', configObject);
-    });
-
-    test('interval set starts with default value', () => {
-      MMMCTA.setConfig({ updateInterval: 100000 });
-      MMMCTA.start();
-
-      expect(global.setInterval)
-        .toHaveBeenCalledWith(expect.any(Function), 100000);
+describe('getTemplateData', () => {
+  it('returns information needed by template', () => {
+    expect(MMMCTA.getTemplateData()).toEqual({
+      loading: MMMCTA.loading,
     });
   });
+});
 
-  describe('getTemplate', () => {
-    it('returns template path', () => {
-      expect(MMMCTA.getTemplate()).toBe('templates/MMM-CTA.njk');
-    });
+describe('getStyles', () => {
+  it('returns styles path', () => {
+    expect(MMMCTA.getStyles()).toEqual([
+      'font-awesome.css',
+      'MMM-CTA.css',
+    ]);
   });
+});
 
-  describe('getTemplateData', () => {
-    it('returns information needed by template', () => {
-      expect(MMMCTA.getTemplateData()).toEqual({
-        loading: MMMCTA.loading,
-      });
+describe('socketNotificationReceived', () => {
+  const payload = { aqi: 179 };
+  describe('notification is MMM-CTA-DATA', () => {
+    it('sets AQI', () => {
+      MMMCTA.socketNotificationReceived('MMM-CTA-DATA', payload);
+
+      expect(MMMCTA.data.aqi).toBe(payload.aqi);
+    });
+
+    it('sets loading to false', () => {
+      MMMCTA.socketNotificationReceived('MMM-CTA-DATA', payload);
+
+      expect(MMMCTA.loading).toBe(false);
+    });
+
+    it('updates dom', () => {
+      MMMCTA.socketNotificationReceived('MMM-CTA-DATA', payload);
+
+      expect(MMMCTA.updateDom).toHaveBeenCalled();
     });
   });
 
-  describe('getStyles', () => {
-    it('returns styles path', () => {
-      expect(MMMCTA.getStyles()).toEqual([
-        'font-awesome.css',
-        'MMM-CTA.css',
-      ]);
-    });
-  });
+  describe('notification is not MMM-CTA-DATA', () => {
+    it('does not set data', () => {
+      MMMCTA.socketNotificationReceived('NOT-MMM-CTA-DATA', payload);
 
-  describe('socketNotificationReceived', () => {
-    const payload = { aqi: 179 };
-    describe('notification is MMM-CTA-DATA', () => {
-      it('sets AQI', () => {
-        MMMCTA.socketNotificationReceived('MMM-CTA-DATA', payload);
-
-        expect(MMMCTA.data.aqi).toBe(payload.aqi);
-      });
-
-      it('sets loading to false', () => {
-        MMMCTA.socketNotificationReceived('MMM-CTA-DATA', payload);
-
-        expect(MMMCTA.loading).toBe(false);
-      });
-
-      it('updates dom', () => {
-        MMMCTA.socketNotificationReceived('MMM-CTA-DATA', payload);
-
-        expect(MMMCTA.updateDom).toHaveBeenCalled();
-      });
-    });
-
-    describe('notification is not MMM-CTA-DATA', () => {
-      it('does not set data', () => {
-        MMMCTA.socketNotificationReceived('NOT-MMM-CTA-DATA', payload);
-
-        expect(MMMCTA.data.aqi).toEqual(undefined);
-      });
+      expect(MMMCTA.data.aqi).toEqual(undefined);
     });
   });
 });
