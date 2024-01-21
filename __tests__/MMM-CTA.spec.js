@@ -109,12 +109,29 @@ describe('getStyles', () => {
 });
 
 describe('socketNotificationReceived', () => {
-  const payload = { aqi: 179 };
+  const payload = {
+    stops: [{
+      type: 'bus',
+      name: 'Mock Stop',
+      arrivals: [
+        {
+          route: '152',
+          direction: 'Westbound',
+          countdown: '3',
+        },
+        {
+          route: '152',
+          direction: 'Westbound',
+          countdown: '27',
+        },
+      ],
+    }],
+  };
   describe('notification is MMM-CTA-DATA', () => {
-    it('sets AQI', () => {
+    it('sets stops', () => {
       MMMCTA.socketNotificationReceived('MMM-CTA-DATA', payload);
 
-      expect(MMMCTA.data.aqi).toBe(payload.aqi);
+      expect(MMMCTA.data.stops).toBe(payload.stops);
     });
 
     it('sets loading to false', () => {
@@ -134,7 +151,7 @@ describe('socketNotificationReceived', () => {
     it('does not set data', () => {
       MMMCTA.socketNotificationReceived('NOT-MMM-CTA-DATA', payload);
 
-      expect(MMMCTA.data.aqi).toEqual(undefined);
+      expect(MMMCTA.data.stops).toEqual(undefined);
     });
   });
 });

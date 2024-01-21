@@ -75,7 +75,7 @@ Module.register('MMM-CTA', {
       return;
     }
 
-    this.data.aqi = payload.aqi;
+    this.data.stops = payload.stops;
     this.loading = false;
     this.updateDom(300);
   },
