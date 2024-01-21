@@ -49,6 +49,7 @@ Module.register('MMM-CTA', {
   getTemplateData() {
     return {
       loading: this.loading,
+	    stops: this.data.stops,
     };
   },
 
