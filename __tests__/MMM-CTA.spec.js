@@ -92,9 +92,32 @@ describe('getTemplate', () => {
 });
 
 describe('getTemplateData', () => {
+  let stops;
+  beforeEach(() => {
+    stops = [{
+      type: 'bus',
+      name: 'Mock Stop',
+      arrivals: [
+        {
+          route: '152',
+          direction: 'Westbound',
+          arrival: '3',
+        },
+        {
+          route: '152',
+          direction: 'Westbound',
+          arrival: '27',
+        },
+      ],
+    }];
+
+    MMMCTA.data.stops = stops;
+  });
+
   it('returns information needed by template', () => {
     expect(MMMCTA.getTemplateData()).toEqual({
       loading: MMMCTA.loading,
+      stops,
     });
   });
 });
