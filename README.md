@@ -1,6 +1,3 @@
-> [!CAUTION]
-> This module is still in development and is not ready for use.
-
 # MMM-CTA
 
 This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
@@ -17,7 +14,7 @@ git clone https://github.com/JHWelch/MMM-CTA.git
 Install NPM dependencies
 ```sh
 cd MMM-CTA
-npm install
+npm install --production
 ```
 
 ## Using the module
@@ -46,6 +43,12 @@ var config = {
 | `updateInterval` | *Optional*   | Refresh time in milliseconds <br>Default 60000 milliseconds (1 minute) |
 
 ## Development
+
+### Installation
+
+```sh
+npm install
+```
 
 ### Testing
 

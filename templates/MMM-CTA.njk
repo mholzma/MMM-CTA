@@ -1,5 +1,33 @@
 {% if loading %}
   <div class="dimmed light">{{ "LOADING" | translate | safe }}</div>
 {% else %}
-  <div> TODO: Add content </div>
+  <div>
+    {% for stop in stops %}
+      <table>
+        <thead>
+          <tr>
+            <td align="middle" colspan="2" class="small">
+              {{ stop.name}}
+            </td>
+          </tr>
+
+          <tr class="xsmall">
+            <th align="left">{{ "DIRECTION" | translate }}</th>
+
+            <th align="right">{{ "ARRIVAL" | translate }}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for arrival in stop.arrivals %}
+            <tr class="xsmall">
+              <td align="left">{{ arrival.direction }}</td>
+
+              <td align="right">{{ arrival.arrival }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+  </div>
 {% endif %}

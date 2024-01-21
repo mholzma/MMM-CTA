@@ -1,5 +1,5 @@
 /* Magic Mirror
- * Node Helper: MMM-Chore-Manager
+ * Node Helper: MMM-CTA
  *
  * By Jordan Welch
  * MIT Licensed.
@@ -18,26 +18,64 @@ module.exports = NodeHelper.create({
       return;
     }
 
-    const { token, city } = payload;
-
-    this.getData(token, city);
+    this.getData(payload);
   },
 
-  async getData(token, city) {
-    const response = await fetch(
-      '', // TODO Add API URL
-      this.requestInit(),
-    );
+  async getData({
+    trainApiKey,
+    busApiKey,
+    maxResultsTrain,
+    maxResultsBus,
+    stops,
+  }) {
+    const responses = await Promise.all(stops.map(async (stop) => {
+      if (stop.type === 'train') {
+        return {
+          type: 'train',
+          name: stop.name,
+          arrivals: await this.getTrainData(stop.id, maxResultsTrain, trainApiKey),
+        };
+      }
 
-    const { aqi } = (await response.json()).data;
+      return {
+        type: 'bus',
+        name: stop.name,
+        arrivals: await this.getBusData(stop.id, maxResultsBus, busApiKey),
+      };
+    }));
 
-    this.sendSocketNotification('MMM-CTA-DATA', { aqi });
+    this.sendSocketNotification('MMM-CTA-DATA', {
+      stops: responses.flat(),
+    });
   },
 
-  requestInit() {
-    return {
-      headers: { Accept: 'application/json' },
-    };
+  async getBusData(id, maxResults, apiKey) {
+    const response = await fetch(this.busUrl(id, maxResults, apiKey));
+    const { 'bustime-response': data } = await response.json();
+
+    if (!data?.prd) {
+      return [];
+    }
+
+    return data.prd.map((bus) => ({
+      route: bus.rt,
+      direction: bus.rtdir,
+      arrival: bus.prdctdn,
+    }));
+  },
+
+  async getTrainData(id, maxResults, apiKey) {
+    const response = await fetch(this.trainUrl(id, maxResults, apiKey));
+    const { ctatt: data } = await response.json();
+
+    if (!data?.eta) {
+      return [];
+    }
+
+    return data.eta.map((train) => ({
+      direction: train.destNm,
+      time: new Date(train.arrT),
+    }));
   },
 
   validate(payload) {
@@ -56,5 +94,17 @@ module.exports = NodeHelper.create({
     });
 
     return valid;
+  },
+
+  busUrl(id, maxResults, apiKey) {
+    const baseUrl = 'http://www.ctabustracker.com/bustime/api/v2/getpredictions';
+
+    return `${baseUrl}?key=${apiKey}&stpid=${id}&top=${maxResults}&format=json`;
+  },
+
+  trainUrl(id, maxResults, apiKey) {
+    const baseUrl = 'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx';
+
+    return `${baseUrl}?key=${apiKey}&mapid=${id}&max=${maxResults}&outputType=json`;
   },
 });

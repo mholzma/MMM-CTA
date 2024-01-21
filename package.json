@@ -5,6 +5,7 @@
   "main": "MMM-CTA.js",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watchAll",
     "lint": "eslint .",
     "fix": "eslint . --fix"
   },
@@ -27,6 +28,10 @@
     "bus",
     "tracker"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JHWelch/MMM-CTA.git"
+  },
   "eslintConfig": {
     "env": {
       "browser": true,

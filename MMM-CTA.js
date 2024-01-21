@@ -10,6 +10,11 @@
 Module.register('MMM-CTA', {
   defaults: {
     updateInterval: 60000,
+    trainApiKey: null,
+    busApiKey: null,
+    maxResultsTrain: 5,
+    maxResultsBus: 5,
+    stops: [],
   },
 
   requiresVersion: '2.2.0',
@@ -29,8 +34,11 @@ Module.register('MMM-CTA', {
 
   getData() {
     this.sendSocketNotification('MMM-CTA-FETCH', {
-      token: this.config.token,
-      city: this.config.city,
+      trainApiKey: this.config.trainApiKey,
+      busApiKey: this.config.busApiKey,
+      stops: this.config.stops,
+      maxResultsTrain: this.config.maxResultsTrain,
+      maxResultsBus: this.config.maxResultsBus,
     });
   },
 
@@ -41,6 +49,13 @@ Module.register('MMM-CTA', {
   getTemplateData() {
     return {
       loading: this.loading,
+      stops: this.data.stops?.map((stop) => ({
+        ...stop,
+        arrivals: stop.arrivals?.map((arrival) => ({
+          direction: arrival.direction,
+          arrival: arrival.arrival ?? this.getMinutesUntil(arrival.time),
+        })),
+      })),
     };
   },
 
@@ -67,8 +82,15 @@ Module.register('MMM-CTA', {
       return;
     }
 
-    this.data.aqi = payload.aqi;
+    this.data.stops = payload.stops;
     this.loading = false;
     this.updateDom(300);
+  },
+
+  getMinutesUntil(arrivalTime) {
+    const now = new Date();
+    const diffInMilliseconds = new Date(arrivalTime) - now;
+
+    return Math.floor(diffInMilliseconds / 1000 / 60);
   },
 });
