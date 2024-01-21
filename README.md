@@ -1,6 +1,3 @@
-> [!CAUTION]
-> This module is still in development and is not ready for use.
-
 # MMM-CTA
 
 This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
