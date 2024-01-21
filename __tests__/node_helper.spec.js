@@ -215,7 +215,8 @@ describe('node_helper', () => {
     });
 
     describe('passed both train and bus configs', () => {
-      it('calls bus API with passed arguments', () => {
+      beforeEach(() => {
+        mockTrainFetch(fetch);
         mockBusFetch(fetch);
 
         helper.socketNotificationReceived('MMM-CTA-FETCH', {
@@ -236,7 +237,9 @@ describe('node_helper', () => {
             },
           ],
         });
+      });
 
+      it('calls bus API with passed arguments', () => {
         expect(fetch).toHaveBeenCalledWith(
           'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
         );
@@ -244,6 +247,43 @@ describe('node_helper', () => {
         expect(fetch).toHaveBeenCalledWith(
           'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
         );
+      });
+
+      it('sends data to client', () => {
+        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+          stops: [
+            {
+              type: 'train',
+              name: 'Mock Stop',
+              arrivals: [
+                {
+                  direction: '95th/Dan Ryan',
+                  time: new Date('2024-01-20T21:28:20'),
+                },
+                {
+                  direction: 'Howard',
+                  time: new Date('2024-01-20T21:32:03'),
+                },
+              ],
+            },
+            {
+              type: 'bus',
+              name: 'Mock Stop',
+              arrivals: [
+                {
+                  route: '152',
+                  direction: 'Westbound',
+                  countdown: '3',
+                },
+                {
+                  route: '152',
+                  direction: 'Westbound',
+                  countdown: '27',
+                },
+              ],
+            },
+          ],
+        });
       });
     });
   });
