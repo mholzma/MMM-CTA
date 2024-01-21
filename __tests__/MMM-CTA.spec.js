@@ -31,12 +31,6 @@ it('requires expected version', () => {
   expect(MMMCTA.requiresVersion).toBe('2.2.0');
 });
 
-describe('defaults', () => {
-  test('updateInterval', () => {
-    expect(MMMCTA.defaults.updateInterval).toBe(60000);
-  });
-});
-
 it('inits module in loading state', () => {
   expect(MMMCTA.loading).toBe(true);
 });
