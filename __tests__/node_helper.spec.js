@@ -41,7 +41,6 @@ describe('node_helper', () => {
 
         expect(fetch).toHaveBeenCalledWith(
           'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
-          { headers: { Accept: 'application/json' } },
         );
       });
     });
@@ -62,7 +61,6 @@ describe('node_helper', () => {
 
         expect(fetch).toHaveBeenCalledWith(
           'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
-          { headers: { Accept: 'application/json' } },
         );
       });
     });
@@ -90,12 +88,10 @@ describe('node_helper', () => {
 
         expect(fetch).toHaveBeenCalledWith(
           'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
-          { headers: { Accept: 'application/json' } },
         );
 
         expect(fetch).toHaveBeenCalledWith(
           'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
-          { headers: { Accept: 'application/json' } },
         );
       });
     });

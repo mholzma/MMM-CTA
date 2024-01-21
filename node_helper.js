@@ -42,23 +42,11 @@ module.exports = NodeHelper.create({
   },
 
   getBusData(stopId, maxResults, apiKey) {
-    return fetch(
-      this.busUrl(stopId, maxResults, apiKey),
-      this.requestInit(),
-    );
+    return fetch(this.busUrl(stopId, maxResults, apiKey));
   },
 
   getTrainData(stopId, maxResults, apiKey) {
-    return fetch(
-      this.trainUrl(stopId, maxResults, apiKey),
-      this.requestInit(),
-    );
-  },
-
-  requestInit() {
-    return {
-      headers: { Accept: 'application/json' },
-    };
+    return fetch(this.trainUrl(stopId, maxResults, apiKey));
   },
 
   validate(payload) {
