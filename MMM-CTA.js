@@ -49,7 +49,13 @@ Module.register('MMM-CTA', {
   getTemplateData() {
     return {
       loading: this.loading,
-      stops: this.data.stops,
+      stops: this.data.stops.map((stop) => ({
+        ...stop,
+        arrivals: stop.arrivals.map((arrival) => ({
+          direction: arrival.direction,
+          arrival: arrival.arrival ?? this.getMinutesUntil(arrival.time),
+        })),
+      })),
     };
   },
 
@@ -79,5 +85,12 @@ Module.register('MMM-CTA', {
     this.data.stops = payload.stops;
     this.loading = false;
     this.updateDom(300);
+  },
+
+  getMinutesUntil(arrivalTime) {
+    const now = new Date();
+    const diffInMilliseconds = arrivalTime - now;
+
+    return Math.floor(diffInMilliseconds / 1000 / 60);
   },
 });

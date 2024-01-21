@@ -93,31 +93,94 @@ describe('getTemplate', () => {
 
 describe('getTemplateData', () => {
   let stops;
-  beforeEach(() => {
-    stops = [{
-      type: 'bus',
-      name: 'Mock Stop',
-      arrivals: [
-        {
-          route: '152',
-          direction: 'Westbound',
-          arrival: '3',
-        },
-        {
-          route: '152',
-          direction: 'Westbound',
-          arrival: '27',
-        },
-      ],
-    }];
 
-    MMMCTA.data.stops = stops;
+  describe('bus information', () => {
+    beforeEach(() => {
+      stops = [{
+        type: 'bus',
+        name: 'Mock Stop',
+        arrivals: [
+          {
+            route: '152',
+            direction: 'Westbound',
+            arrival: '3',
+          },
+          {
+            route: '152',
+            direction: 'Westbound',
+            arrival: '27',
+          },
+        ],
+      }];
+
+      MMMCTA.data.stops = stops;
+    });
+
+    it('returns information needed by template', () => {
+      expect(MMMCTA.getTemplateData()).toEqual({
+        loading: MMMCTA.loading,
+        stops: [{
+          type: 'bus',
+          name: 'Mock Stop',
+          arrivals: [
+            {
+              direction: 'Westbound',
+              arrival: '3',
+            },
+            {
+              direction: 'Westbound',
+              arrival: '27',
+            },
+          ],
+        }],
+      });
+    });
   });
 
-  it('returns information needed by template', () => {
-    expect(MMMCTA.getTemplateData()).toEqual({
-      loading: MMMCTA.loading,
-      stops,
+  describe('train information', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date()); // Ensures time is consistent
+      threeMinutes = new Date();
+      threeMinutes.setMinutes(threeMinutes.getMinutes() + 3);
+      twelveMinutes = new Date();
+      twelveMinutes.setMinutes(twelveMinutes.getMinutes() + 12);
+
+      stops = [{
+        type: 'train',
+        name: 'Mock Stop',
+        arrivals: [
+          {
+            direction: '95th/Dan Ryan',
+            time: threeMinutes,
+          },
+          {
+            direction: 'Howard',
+            time: twelveMinutes,
+          },
+        ],
+      }];
+    });
+
+    it('returns information needed by template', () => {
+      MMMCTA.data.stops = stops;
+
+      expect(MMMCTA.getTemplateData()).toEqual({
+        loading: MMMCTA.loading,
+        stops: [{
+          type: 'train',
+          name: 'Mock Stop',
+          arrivals: [
+            {
+              direction: '95th/Dan Ryan',
+              arrival: 3,
+            },
+            {
+              direction: 'Howard',
+              arrival: 12,
+            },
+          ],
+        }],
+      });
     });
   });
 });
