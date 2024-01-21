@@ -28,25 +28,40 @@ module.exports = NodeHelper.create({
     maxResultsBus,
     stops,
   }) {
-    const responses = stops.map(async (stop) => {
+    const responses = await Promise.all(stops.map(async (stop) => {
       if (stop.type === 'train') {
-        return this.getTrainData(stop.stopId, maxResultsTrain, trainApiKey);
+        return this.getTrainData(stop.id, maxResultsTrain, trainApiKey);
       }
 
-      return this.getBusData(stop.stopId, maxResultsBus, busApiKey);
+      return {
+        type: 'bus',
+        name: stop.name,
+        arrivals: await this.getBusData(stop.id, maxResultsBus, busApiKey),
+      };
+    }));
+
+    this.sendSocketNotification('MMM-CTA-DATA', {
+      stops: responses.flat(),
     });
-
-    // const { aqi } = (await response.json()).data;
-
-    // this.sendSocketNotification('MMM-CTA-DATA', { aqi });
   },
 
-  getBusData(stopId, maxResults, apiKey) {
-    return fetch(this.busUrl(stopId, maxResults, apiKey));
+  async getBusData(id, maxResults, apiKey) {
+    const response = await fetch(this.busUrl(id, maxResults, apiKey));
+    const { 'bustime-response': data } = await response.json();
+
+    if (!data?.prd) {
+      return [];
+    }
+
+    return data.prd.map((bus) => ({
+      route: bus.rt,
+      direction: bus.rtdir,
+      countdown: bus.prdctdn,
+    }));
   },
 
-  getTrainData(stopId, maxResults, apiKey) {
-    return fetch(this.trainUrl(stopId, maxResults, apiKey));
+  async getTrainData(id, maxResults, apiKey) {
+    return fetch(this.trainUrl(id, maxResults, apiKey));
   },
 
   validate(payload) {
@@ -67,15 +82,15 @@ module.exports = NodeHelper.create({
     return valid;
   },
 
-  busUrl(stopId, maxResults, apiKey) {
+  busUrl(id, maxResults, apiKey) {
     const baseUrl = 'http://www.ctabustracker.com/bustime/api/v2/getpredictions';
 
-    return `${baseUrl}?key=${apiKey}&stpid=${stopId}&top=${maxResults}&format=json`;
+    return `${baseUrl}?key=${apiKey}&stpid=${id}&top=${maxResults}&format=json`;
   },
 
-  trainUrl(stopId, maxResults, apiKey) {
+  trainUrl(id, maxResults, apiKey) {
     const baseUrl = 'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx';
 
-    return `${baseUrl}?key=${apiKey}&mapid=${stopId}&max=${maxResults}&outputType=json`;
+    return `${baseUrl}?key=${apiKey}&mapid=${id}&max=${maxResults}&outputType=json`;
   },
 });

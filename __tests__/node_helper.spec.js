@@ -4,6 +4,53 @@ beforeAll(() => {
   require('../__mocks__/node-fetch');
 });
 
+const mockBusFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
+  json: () => Promise.resolve({
+    'bustime-response': {
+      prd: [
+        {
+          tmstmp: '20240120 20:26',
+          typ: 'A',
+          stpnm: 'Addison & Lakewood',
+          stpid: '12557',
+          vid: '1637',
+          dstp: 2042,
+          rt: '152',
+          rtdd: '152',
+          rtdir: 'Westbound',
+          des: 'Cumberland',
+          prdtm: '20240120 20:29',
+          tablockid: '152 -403',
+          tatripid: '88355271',
+          origtatripno: '251994266',
+          dly: false,
+          prdctdn: '3',
+          zone: '',
+        },
+        {
+          tmstmp: '20240120 20:26',
+          typ: 'A',
+          stpnm: 'Addison & Lakewood',
+          stpid: '12557',
+          vid: '1408',
+          dstp: 10603,
+          rt: '152',
+          rtdd: '152',
+          rtdir: 'Westbound',
+          des: 'Cumberland',
+          prdtm: '20240120 20:54',
+          tablockid: '152 -406',
+          tatripid: '88355270',
+          origtatripno: '251994148',
+          dly: false,
+          prdctdn: '27',
+          zone: '',
+        },
+      ],
+    },
+  }),
+}));
+
 describe('node_helper', () => {
   let helper;
   let fetch;
@@ -34,8 +81,8 @@ describe('node_helper', () => {
           maxResultsBus: 5,
           stops: [{
             type: 'train',
-            stopId: '1234',
-            stopName: 'Mock Stop',
+            id: '1234',
+            name: 'Mock Stop',
           }],
         });
 
@@ -46,7 +93,9 @@ describe('node_helper', () => {
     });
 
     describe('passed proper bus config', () => {
-      it('calls bus API with passed arguments', () => {
+      beforeEach(() => {
+        mockBusFetch(fetch);
+
         helper.socketNotificationReceived('MMM-CTA-FETCH', {
           trainApiKey: null,
           busApiKey: 'BUS_API_KEY',
@@ -54,19 +103,44 @@ describe('node_helper', () => {
           maxResultsBus: 5,
           stops: [{
             type: 'bus',
-            stopId: '1234',
-            stopName: 'Mock Stop',
+            id: '1234',
+            name: 'Mock Stop',
           }],
         });
+      });
 
+      it('calls bus API with passed arguments', () => {
         expect(fetch).toHaveBeenCalledWith(
           'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
         );
+      });
+
+      it('sends data to client', () => {
+        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+          stops: [{
+            type: 'bus',
+            name: 'Mock Stop',
+            arrivals: [
+              {
+                route: '152',
+                direction: 'Westbound',
+                countdown: '3',
+              },
+              {
+                route: '152',
+                direction: 'Westbound',
+                countdown: '27',
+              },
+            ],
+          }],
+        });
       });
     });
 
     describe('passed both train and bus configs', () => {
       it('calls bus API with passed arguments', () => {
+        mockBusFetch(fetch);
+
         helper.socketNotificationReceived('MMM-CTA-FETCH', {
           trainApiKey: 'TRAIN_API_KEY',
           busApiKey: 'BUS_API_KEY',
@@ -75,13 +149,13 @@ describe('node_helper', () => {
           stops: [
             {
               type: 'train',
-              stopId: '1234',
-              stopName: 'Mock Stop',
+              id: '1234',
+              name: 'Mock Stop',
             },
             {
               type: 'bus',
-              stopId: '1234',
-              stopName: 'Mock Stop',
+              id: '1234',
+              name: 'Mock Stop',
             },
           ],
         });
@@ -93,12 +167,6 @@ describe('node_helper', () => {
         expect(fetch).toHaveBeenCalledWith(
           'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
         );
-      });
-    });
-
-    describe('missing X', () => {
-      it('is true', () => {
-        expect(true).toBe(true);
       });
     });
   });
