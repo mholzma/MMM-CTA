@@ -30,7 +30,11 @@ module.exports = NodeHelper.create({
   }) {
     const responses = await Promise.all(stops.map(async (stop) => {
       if (stop.type === 'train') {
-        return this.getTrainData(stop.id, maxResultsTrain, trainApiKey);
+        return {
+          type: 'train',
+          name: stop.name,
+          arrivals: await this.getTrainData(stop.id, maxResultsTrain, trainApiKey),
+        };
       }
 
       return {
@@ -61,7 +65,17 @@ module.exports = NodeHelper.create({
   },
 
   async getTrainData(id, maxResults, apiKey) {
-    return fetch(this.trainUrl(id, maxResults, apiKey));
+    const response = await fetch(this.trainUrl(id, maxResults, apiKey));
+    const { ctatt: data } = await response.json();
+
+    if (!data?.eta) {
+      return [];
+    }
+
+    return data.eta.map((train) => ({
+      direction: train.destNm,
+      time: new Date(train.arrT),
+    }));
   },
 
   validate(payload) {
