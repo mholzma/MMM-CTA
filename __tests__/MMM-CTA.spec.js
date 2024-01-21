@@ -38,8 +38,11 @@ it('inits module in loading state', () => {
 describe('start', () => {
   const originalInterval = setInterval;
   const configObject = {
-    token: 'mock_token',
-    city: 'chicago',
+    trainApiKey: 'TRAIN_API_KEY',
+    busApiKey: 'BUS_API_KEY',
+    stops: [],
+    maxResultsTrain: 5,
+    maxResultsBus: 5,
   };
 
   beforeEach(() => {

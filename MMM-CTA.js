@@ -34,8 +34,11 @@ Module.register('MMM-CTA', {
 
   getData() {
     this.sendSocketNotification('MMM-CTA-FETCH', {
-      token: this.config.token,
-      city: this.config.city,
+      trainApiKey: this.config.trainApiKey,
+      busApiKey: this.config.busApiKey,
+      stops: this.config.stops,
+      maxResultsTrain: this.config.maxResultsTrain,
+      maxResultsBus: this.config.maxResultsBus,
     });
   },
 
