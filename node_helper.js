@@ -1,5 +1,5 @@
 /* Magic Mirror
- * Node Helper: MMM-Chore-Manager
+ * Node Helper: MMM-CTA
  *
  * By Jordan Welch
  * MIT Licensed.
