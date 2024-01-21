@@ -27,6 +27,10 @@
     "bus",
     "tracker"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JHWelch/MMM-CTA.git"
+  },
   "eslintConfig": {
     "env": {
       "browser": true,
