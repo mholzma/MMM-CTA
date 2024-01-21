@@ -60,7 +60,7 @@ module.exports = NodeHelper.create({
     return data.prd.map((bus) => ({
       route: bus.rt,
       direction: bus.rtdir,
-      countdown: bus.prdctdn,
+      arrival: bus.prdctdn,
     }));
   },
 

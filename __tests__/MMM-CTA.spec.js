@@ -117,12 +117,12 @@ describe('socketNotificationReceived', () => {
         {
           route: '152',
           direction: 'Westbound',
-          countdown: '3',
+          arrival: '3',
         },
         {
           route: '152',
           direction: 'Westbound',
-          countdown: '27',
+          arrival: '27',
         },
       ],
     }],
