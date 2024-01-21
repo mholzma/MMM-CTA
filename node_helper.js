@@ -18,20 +18,24 @@ module.exports = NodeHelper.create({
       return;
     }
 
-    const { token, city } = payload;
-
-    this.getData(token, city);
+    this.getData(payload);
   },
 
-  async getData(token, city) {
+  async getData({
+    trainApiKey,
+    busApiKey,
+    maxResultsTrain,
+    maxResultsBus,
+    stops,
+  }) {
     const response = await fetch(
-      '', // TODO Add API URL
+      this.trainUrl(stops[0].stopId, maxResultsTrain, trainApiKey),
       this.requestInit(),
     );
 
-    const { aqi } = (await response.json()).data;
+    // const { aqi } = (await response.json()).data;
 
-    this.sendSocketNotification('MMM-CTA-DATA', { aqi });
+    // this.sendSocketNotification('MMM-CTA-DATA', { aqi });
   },
 
   requestInit() {
@@ -56,5 +60,11 @@ module.exports = NodeHelper.create({
     });
 
     return valid;
+  },
+
+  trainUrl(stopId, maxResults, apiKey) {
+    const baseUrl = 'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx';
+
+    return `${baseUrl}?key=${apiKey}&mapid=${stopId}&max=${maxResults}&outputType=json`;
   },
 });

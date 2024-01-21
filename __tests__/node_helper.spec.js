@@ -17,9 +17,23 @@ describe('node_helper', () => {
   });
 
   describe('socketNotificationReceived', () => {
-    describe('passed proper config', () => {
-      it('is true', () => {
-        expect(true).toBe(true);
+    describe('passed proper train config', () => {
+      it('calls train API with passed arguments', () => {
+        helper.socketNotificationReceived('MMM-CTA-FETCH', {
+          trainApiKey: 'TRAIN_API_KEY',
+          busApiKey: null,
+          maxResultsTrain: 5,
+          maxResultsBus: 5,
+          stops: [{
+            stopId: '1234',
+            stopName: 'Mock Stop',
+          }],
+        });
+
+        expect(fetch).toHaveBeenCalledWith(
+          'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
+          { headers: { Accept: 'application/json' } },
+        );
       });
     });
 
