@@ -67,6 +67,39 @@ describe('node_helper', () => {
       });
     });
 
+    describe('passed both train and bus configs', () => {
+      it('calls bus API with passed arguments', () => {
+        helper.socketNotificationReceived('MMM-CTA-FETCH', {
+          trainApiKey: 'TRAIN_API_KEY',
+          busApiKey: 'BUS_API_KEY',
+          maxResultsTrain: 5,
+          maxResultsBus: 5,
+          stops: [
+            {
+              type: 'train',
+              stopId: '1234',
+              stopName: 'Mock Stop',
+            },
+            {
+              type: 'bus',
+              stopId: '1234',
+              stopName: 'Mock Stop',
+            },
+          ],
+        });
+
+        expect(fetch).toHaveBeenCalledWith(
+          'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
+          { headers: { Accept: 'application/json' } },
+        );
+
+        expect(fetch).toHaveBeenCalledWith(
+          'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
+          { headers: { Accept: 'application/json' } },
+        );
+      });
+    });
+
     describe('missing X', () => {
       it('is true', () => {
         expect(true).toBe(true);
