@@ -54,13 +54,13 @@ describe('start', () => {
     global.setInterval = originalInterval;
   });
 
-  test('logs start of module', () => {
+  it('logs start of module', () => {
     MMMCTA.start();
 
     expect(global.Log.info).toHaveBeenCalledWith('Starting module: MMM-CTA');
   });
 
-  test('requests data from node_helper with config variables', () => {
+  it('requests data from node_helper with config variables', () => {
     MMMCTA.start();
 
     expect(MMMCTA.sendSocketNotification)
