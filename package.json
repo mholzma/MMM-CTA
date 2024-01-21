@@ -5,6 +5,7 @@
   "main": "MMM-CTA.js",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watchAll",
     "lint": "eslint .",
     "fix": "eslint . --fix"
   },
