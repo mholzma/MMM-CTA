@@ -12,7 +12,7 @@
           </tr>
 
           <tr class="xsmall">
-            <th>{{ "DIRECTION" | translate }}</th>
+            <th align="left">{{ "DIRECTION" | translate }}</th>
 
             <th align="right">{{ "ARRIVAL" | translate }}</th>
           </tr>
@@ -21,7 +21,7 @@
         <tbody>
           {% for arrival in stop.arrivals %}
             <tr class="xsmall">
-              <td>{{ arrival.direction }}</td>
+              <td align="left">{{ arrival.direction }}</td>
 
               <td align="right">{{ arrival.arrival }}</td>
             </tr>
