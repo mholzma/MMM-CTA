@@ -44,8 +44,8 @@ var config = {
 
 | Option            | Required?    | Description                                                            |
 | ----------------- | ------------ | ---------------------------------------------------------------------- |
-| `busApiKey`       | **Required** | How to get?                                                            |
-| `trainApiKey`     | **Required** | How to get?                                                            |
+| `busApiKey`       | **Required** | See [Obtaining CTA API keys](#obtaining-cta-api-keys)                  |
+| `trainApiKey`     | **Required** | See [Obtaining CTA API keys](#obtaining-cta-api-keys)                  |
 | `stops`           | **Required** | Array of stops to display. See [`stops` option](#stops-option)         |
 | `updateInterval`  | *Optional*   | Refresh time in milliseconds <br>Default 60000 milliseconds (1 minute) |
 | `maxResultsBus`   | *Optional*   | Maximum number of bus results to display <br>Default 5                 |
