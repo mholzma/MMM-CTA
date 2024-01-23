@@ -2,6 +2,10 @@
 
 This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
 
+This module displays Chicago Transit Authority (CTA) bus and train arrival times.
+
+![Screenshot](screenshot.png)
+
 ## Installation
 
 In ~/MagicMirror/modules
