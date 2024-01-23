@@ -56,9 +56,9 @@ describe('train stop', () => {
     expect(template).toContain('10');
   });
 
-  describe('titleIcons turned on', () => {
+  describe('routeIcons turned on', () => {
     beforeEach(() => {
-      data.titleIcons = true;
+      data.routeIcons = true;
       template = nunjucks.render('MMM-CTA.njk', data);
     });
 
@@ -67,9 +67,9 @@ describe('train stop', () => {
     });
   });
 
-  describe('titleIcons turned off', () => {
+  describe('routeIcons turned off', () => {
     beforeEach(() => {
-      data.titleIcons = false;
+      data.routeIcons = false;
       template = nunjucks.render('MMM-CTA.njk', data);
     });
 
@@ -114,9 +114,9 @@ describe('bus stop', () => {
     expect(template).toContain('10');
   });
 
-  describe('titleIcons turned on', () => {
+  describe('routeIcons turned on', () => {
     beforeEach(() => {
-      data.titleIcons = true;
+      data.routeIcons = true;
       template = nunjucks.render('MMM-CTA.njk', data);
     });
 
@@ -125,9 +125,9 @@ describe('bus stop', () => {
     });
   });
 
-  describe('titleIcons turned off', () => {
+  describe('routeIcons turned off', () => {
     beforeEach(() => {
-      data.titleIcons = false;
+      data.routeIcons = false;
       template = nunjucks.render('MMM-CTA.njk', data);
     });
 

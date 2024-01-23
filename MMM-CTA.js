@@ -14,7 +14,7 @@ Module.register('MMM-CTA', {
     busApiKey: null,
     maxResultsBus: 5,
     maxResultsTrain: 5,
-    titleIcons: true,
+    routeIcons: true,
     stops: [],
   },
 
@@ -50,7 +50,7 @@ Module.register('MMM-CTA', {
   getTemplateData() {
     return {
       loading: this.loading,
-      titleIcons: this.config.titleIcons,
+      routeIcons: this.config.routeIcons,
       stops: this.data.stops?.map((stop) => ({
         ...stop,
         arrivals: stop.arrivals?.map((arrival) => ({
