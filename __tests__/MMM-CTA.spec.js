@@ -139,7 +139,8 @@ describe('getTemplateData', () => {
 
   describe('train information', () => {
     beforeEach(() => {
-      jest.useFakeTimers().setSystemTime(new Date()); // Ensures time is consistent
+      now = new Date();
+      jest.useFakeTimers().setSystemTime(now); // Ensures time is consistent
       threeMinutes = new Date();
       threeMinutes.setMinutes(threeMinutes.getMinutes() + 3);
       twelveMinutes = new Date();
@@ -149,6 +150,10 @@ describe('getTemplateData', () => {
         type: 'train',
         name: 'Mock Stop',
         arrivals: [
+          {
+            direction: '95th/Dan Ryan',
+            time: now,
+          },
           {
             direction: '95th/Dan Ryan',
             time: threeMinutes,
@@ -172,11 +177,15 @@ describe('getTemplateData', () => {
           arrivals: [
             {
               direction: '95th/Dan Ryan',
-              arrival: 3,
+              arrival: 'DUE',
+            },
+            {
+              direction: '95th/Dan Ryan',
+              arrival: '3',
             },
             {
               direction: 'Howard',
-              arrival: 12,
+              arrival: '12',
             },
           ],
         }],
