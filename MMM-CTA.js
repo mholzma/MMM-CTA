@@ -55,6 +55,7 @@ Module.register('MMM-CTA', {
         ...stop,
         arrivals: stop.arrivals?.map((arrival) => ({
           direction: arrival.direction,
+          routeColor: arrival.routeColor,
           arrival: arrival.arrival ?? this.getMinutesUntil(arrival.time),
         })),
       })),

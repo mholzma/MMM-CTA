@@ -169,10 +169,12 @@ describe('getTemplateData', () => {
           {
             direction: '95th/Dan Ryan',
             time: threeMinutes,
+            routeColor: 'red',
           },
           {
             direction: 'Howard',
             time: twelveMinutes,
+            routeColor: 'green',
           },
         ],
       }];
@@ -195,10 +197,12 @@ describe('getTemplateData', () => {
             {
               direction: '95th/Dan Ryan',
               arrival: '3',
+              routeColor: 'red',
             },
             {
               direction: 'Howard',
               arrival: '12',
+              routeColor: 'green',
             },
           ],
         }],
