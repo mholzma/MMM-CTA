@@ -3,27 +3,39 @@
 {% else %}
   <div>
     {% for stop in stops %}
-      <table>
+      {% if index.first %}
+        <table>
+      {% else %}
+        <table class="cta-mt-10">
+      {% endif %}
         <thead>
           <tr>
-            <td align="middle" colspan="2">
+            <td class="bright align-middle" colspan="2">
               {{ stop.name}}
             </td>
           </tr>
 
           <tr class="small">
-            <th align="left">{{ "DIRECTION" | translate }}</th>
+            <th class="align-left">
+              {{ "DIRECTION" | translate }}
+            </th>
 
-            <th align="right">{{ "ARRIVAL" | translate }}</th>
+            <th class="align-right">
+              {{ "ARRIVAL" | translate }}
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {% for arrival in stop.arrivals %}
             <tr class="small">
-              <td align="left">{{ arrival.direction }}</td>
+              <td class="align-left">
+                {{ arrival.direction }}
+              </td>
 
-              <td align="right">{{ arrival.arrival }}</td>
+              <td class="bright align-right bold">
+                {{ arrival.arrival }}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
