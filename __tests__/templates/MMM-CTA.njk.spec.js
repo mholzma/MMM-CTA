@@ -113,6 +113,28 @@ describe('bus stop', () => {
     expect(template).toContain('5');
     expect(template).toContain('10');
   });
+
+  describe('titleIcons turned on', () => {
+    beforeEach(() => {
+      data.titleIcons = true;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('shows bus icon', () => {
+      expect(template).toContain('fa-bus');
+    });
+  });
+
+  describe('titleIcons turned off', () => {
+    beforeEach(() => {
+      data.titleIcons = false;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('does not show bus icon', () => {
+      expect(template).not.toContain('fa-bus');
+    });
+  });
 });
 
 describe('multiple stops', () => {
