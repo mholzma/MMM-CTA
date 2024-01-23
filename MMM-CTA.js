@@ -90,7 +90,8 @@ Module.register('MMM-CTA', {
   getMinutesUntil(arrivalTime) {
     const now = new Date();
     const diffInMilliseconds = new Date(arrivalTime) - now;
+    const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60);
 
-    return Math.floor(diffInMilliseconds / 1000 / 60);
+    return diffInMinutes === 0 ? 'DUE' : diffInMinutes.toString();
   },
 });
