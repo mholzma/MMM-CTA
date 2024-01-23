@@ -34,21 +34,48 @@ describe('train stop', () => {
         ],
       }],
     };
-    template = nunjucks.render('MMM-CTA.njk', data);
   });
 
   it('shows train stop name', () => {
+    template = nunjucks.render('MMM-CTA.njk', data);
+
     expect(template).toContain('Train Stop');
   });
 
   it('shows train stop directions', () => {
+    template = nunjucks.render('MMM-CTA.njk', data);
+
     expect(template).toContain('North');
     expect(template).toContain('South');
   });
 
   it('shows train stop arrivals', () => {
+    template = nunjucks.render('MMM-CTA.njk', data);
+
     expect(template).toContain('5');
     expect(template).toContain('10');
+  });
+
+  describe('titleIcons turned on', () => {
+    beforeEach(() => {
+      data.titleIcons = true;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('shows train icon', () => {
+      expect(template).toContain('fa-train');
+    });
+  });
+
+  describe('titleIcons turned off', () => {
+    beforeEach(() => {
+      data.titleIcons = false;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('does not show train icon', () => {
+      expect(template).not.toContain('fa-train');
+    });
   });
 });
 

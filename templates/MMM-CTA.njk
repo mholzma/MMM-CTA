@@ -11,6 +11,12 @@
         <thead>
           <tr>
             <td class="bright align-middle" colspan="2">
+              {% if titleIcons %}
+                {% if stop.type === 'train' %}
+                  <i class="fa fa-train fa-sm cta-mr-5"></i>
+                {% endif %}
+              {% endif %}
+
               {{ stop.name}}
             </td>
           </tr>
