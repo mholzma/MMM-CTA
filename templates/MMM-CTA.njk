@@ -10,7 +10,14 @@
       {% endif %}
         <thead>
           <tr>
-            <td class="bright align-middle" colspan="2">
+            <td
+              class="bright align-middle"
+              {% if routeIcons %}
+                colspan="3"
+              {% else %}
+                colspan="2"
+              {% endif %}
+            >
               {{ stop.name}}
             </td>
           </tr>
