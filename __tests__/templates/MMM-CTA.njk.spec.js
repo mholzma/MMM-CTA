@@ -34,21 +34,48 @@ describe('train stop', () => {
         ],
       }],
     };
-    template = nunjucks.render('MMM-CTA.njk', data);
   });
 
   it('shows train stop name', () => {
+    template = nunjucks.render('MMM-CTA.njk', data);
+
     expect(template).toContain('Train Stop');
   });
 
   it('shows train stop directions', () => {
+    template = nunjucks.render('MMM-CTA.njk', data);
+
     expect(template).toContain('North');
     expect(template).toContain('South');
   });
 
   it('shows train stop arrivals', () => {
+    template = nunjucks.render('MMM-CTA.njk', data);
+
     expect(template).toContain('5');
     expect(template).toContain('10');
+  });
+
+  describe('routeIcons turned on', () => {
+    beforeEach(() => {
+      data.routeIcons = true;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('shows train icon', () => {
+      expect(template).toContain('fa-train');
+    });
+  });
+
+  describe('routeIcons turned off', () => {
+    beforeEach(() => {
+      data.routeIcons = false;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('does not show train icon', () => {
+      expect(template).not.toContain('fa-train');
+    });
   });
 });
 
@@ -85,6 +112,28 @@ describe('bus stop', () => {
   it('shows bus stop arrivals', () => {
     expect(template).toContain('5');
     expect(template).toContain('10');
+  });
+
+  describe('routeIcons turned on', () => {
+    beforeEach(() => {
+      data.routeIcons = true;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('shows bus icon', () => {
+      expect(template).toContain('fa-bus');
+    });
+  });
+
+  describe('routeIcons turned off', () => {
+    beforeEach(() => {
+      data.routeIcons = false;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('does not show bus icon', () => {
+      expect(template).not.toContain('fa-bus');
+    });
   });
 });
 

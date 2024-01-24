@@ -23,6 +23,7 @@ it('has a default config', () => {
     busApiKey: null,
     maxResultsTrain: 5,
     maxResultsBus: 5,
+    routeIcons: true,
     stops: [],
   });
 });
@@ -119,6 +120,7 @@ describe('getTemplateData', () => {
     it('returns information needed by template', () => {
       expect(MMMCTA.getTemplateData()).toEqual({
         loading: MMMCTA.loading,
+        routeIcons: MMMCTA.config.routeIcons,
         stops: [{
           type: 'bus',
           name: 'Mock Stop',
@@ -126,13 +128,25 @@ describe('getTemplateData', () => {
             {
               direction: 'Westbound',
               arrival: '3',
+              routeColor: '',
             },
             {
               direction: 'Westbound',
               arrival: '27',
+              routeColor: '',
             },
           ],
         }],
+      });
+    });
+
+    describe('routeIcons turned off', () => {
+      beforeEach(() => {
+        MMMCTA.setConfig({ routeIcons: false });
+      });
+
+      it('returns routeIcons false', () => {
+        expect(MMMCTA.getTemplateData().routeIcons).toEqual(false);
       });
     });
   });
@@ -153,14 +167,17 @@ describe('getTemplateData', () => {
           {
             direction: '95th/Dan Ryan',
             time: now,
+            routeColor: 'red',
           },
           {
             direction: '95th/Dan Ryan',
             time: threeMinutes,
+            routeColor: 'red',
           },
           {
             direction: 'Howard',
             time: twelveMinutes,
+            routeColor: 'green',
           },
         ],
       }];
@@ -171,6 +188,7 @@ describe('getTemplateData', () => {
 
       expect(MMMCTA.getTemplateData()).toEqual({
         loading: MMMCTA.loading,
+        routeIcons: MMMCTA.config.routeIcons,
         stops: [{
           type: 'train',
           name: 'Mock Stop',
@@ -178,14 +196,17 @@ describe('getTemplateData', () => {
             {
               direction: '95th/Dan Ryan',
               arrival: 'DUE',
+              routeColor: 'cta-red',
             },
             {
               direction: '95th/Dan Ryan',
               arrival: '3',
+              routeColor: 'cta-red',
             },
             {
               direction: 'Howard',
               arrival: '12',
+              routeColor: 'cta-green',
             },
           ],
         }],

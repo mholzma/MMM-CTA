@@ -85,7 +85,7 @@ const mockTrainFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
           staNm: 'Addison',
           stpDe: 'Service toward Howard',
           rn: '922',
-          rt: 'Red',
+          rt: 'G',
           destSt: '30173',
           destNm: 'Howard',
           trDr: '1',
@@ -158,10 +158,12 @@ describe('node_helper', () => {
               {
                 direction: '95th/Dan Ryan',
                 time: new Date('2024-01-20T21:28:20'),
+                routeColor: 'red',
               },
               {
                 direction: 'Howard',
                 time: new Date('2024-01-20T21:32:03'),
+                routeColor: 'green',
               },
             ],
           }],
@@ -259,10 +261,12 @@ describe('node_helper', () => {
                 {
                   direction: '95th/Dan Ryan',
                   time: new Date('2024-01-20T21:28:20'),
+                  routeColor: 'red',
                 },
                 {
                   direction: 'Howard',
                   time: new Date('2024-01-20T21:32:03'),
+                  routeColor: 'green',
                 },
               ],
             },

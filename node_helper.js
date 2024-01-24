@@ -74,6 +74,7 @@ module.exports = NodeHelper.create({
 
     return data.eta.map((train) => ({
       direction: train.destNm,
+      routeColor: this.routeToColor(train.rt),
       time: new Date(train.arrT),
     }));
   },
@@ -106,5 +107,18 @@ module.exports = NodeHelper.create({
     const baseUrl = 'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx';
 
     return `${baseUrl}?key=${apiKey}&mapid=${id}&max=${maxResults}&outputType=json`;
+  },
+
+  routeToColor(route) {
+    return {
+      Red: 'red',
+      Blue: 'blue',
+      Brn: 'brown',
+      G: 'green',
+      Org: 'orange',
+      P: 'purple',
+      Pink: 'pink',
+      Y: 'yellow',
+    }[route] || 'gray';
   },
 });
