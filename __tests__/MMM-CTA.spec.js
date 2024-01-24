@@ -128,10 +128,12 @@ describe('getTemplateData', () => {
             {
               direction: 'Westbound',
               arrival: '3',
+              routeColor: '',
             },
             {
               direction: 'Westbound',
               arrival: '27',
+              routeColor: '',
             },
           ],
         }],
@@ -165,6 +167,7 @@ describe('getTemplateData', () => {
           {
             direction: '95th/Dan Ryan',
             time: now,
+            routeColor: 'red',
           },
           {
             direction: '95th/Dan Ryan',
@@ -193,16 +196,17 @@ describe('getTemplateData', () => {
             {
               direction: '95th/Dan Ryan',
               arrival: 'DUE',
+              routeColor: 'cta-red',
             },
             {
               direction: '95th/Dan Ryan',
               arrival: '3',
-              routeColor: 'red',
+              routeColor: 'cta-red',
             },
             {
               direction: 'Howard',
               arrival: '12',
-              routeColor: 'green',
+              routeColor: 'cta-green',
             },
           ],
         }],

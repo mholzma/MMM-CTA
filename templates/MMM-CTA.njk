@@ -34,12 +34,12 @@
           {% for arrival in stop.arrivals %}
             <tr class="small">
               {% if routeIcons %}
-                <td class="{{"icon-col align-left cta-" + arrival.routeColor}}">
-                {% if stop.type === 'train' %}
-                  <i class="fa fa-train fa-sm cta-mr-5"></i>
-                {% elif stop.type === 'bus' %}
-                  <i class="fa fa-bus fa-sm cta-mr-5"></i>
-                {% endif %}
+                <td class="icon-col align-left {{ arrival.routeColor }}">
+                  {% if stop.type === 'train' %}
+                    <i class="fa fa-train fa-sm cta-mr-5"></i>
+                  {% elif stop.type === 'bus' %}
+                    <i class="fa fa-bus fa-sm cta-mr-5"></i>
+                  {% endif %}
                 </td>
               {% endif %}
 
