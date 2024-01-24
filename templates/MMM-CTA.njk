@@ -11,19 +11,15 @@
         <thead>
           <tr>
             <td class="bright align-middle" colspan="2">
-              {% if routeIcons %}
-                {% if stop.type === 'train' %}
-                  <i class="fa fa-train fa-sm cta-mr-5"></i>
-                {% elif stop.type === 'bus' %}
-                  <i class="fa fa-bus fa-sm cta-mr-5"></i>
-                {% endif %}
-              {% endif %}
-
               {{ stop.name}}
             </td>
           </tr>
 
           <tr class="small">
+            {% if routeIcons %}
+              <th class="align-left"></th>
+            {% endif %}
+
             <th class="align-left">
               {{ "DIRECTION" | translate }}
             </th>
@@ -37,6 +33,16 @@
         <tbody>
           {% for arrival in stop.arrivals %}
             <tr class="small">
+              {% if routeIcons %}
+                <td class="{{"icon-col align-left cta-" + arrival.routeColor}}">
+                {% if stop.type === 'train' %}
+                  <i class="fa fa-train fa-sm cta-mr-5"></i>
+                {% elif stop.type === 'bus' %}
+                  <i class="fa fa-bus fa-sm cta-mr-5"></i>
+                {% endif %}
+                </td>
+              {% endif %}
+
               <td class="align-left">
                 {{ arrival.direction }}
               </td>

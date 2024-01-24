@@ -6,3 +6,45 @@
 .cta-mr-5 {
   margin-right: 5px;
 }
+
+.icon-col {
+  width: 15px;
+}
+
+/**
+ * CTA Colors
+ *
+ * https://www.transitchicago.com/developers/branding/#branding
+ */
+
+.cta-red {
+  color: #c60c30;
+}
+
+.cta-blue {
+  color: #00a1de;
+}
+
+.cta-brown {
+  color: #62361b;
+}
+
+.cta-green {
+  color: #009b3a;
+}
+
+.cta-orange {
+  color: #f9461c;
+}
+
+.cta-purple {
+  color: #522398;
+}
+
+.cta-pink {
+  color: #e27ea6;
+}
+
+.cta-yellow {
+  color: #f9e300;
+}
