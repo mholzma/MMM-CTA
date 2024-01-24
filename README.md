@@ -52,8 +52,9 @@ var config = {
 | `trainApiKey`     | **Required** | See [Obtaining CTA API keys](#obtaining-cta-api-keys)                  |
 | `stops`           | **Required** | Array of stops to display. See [`stops` option](#stops-option)         |
 | `updateInterval`  | *Optional*   | Refresh time in milliseconds <br>Default 60000 milliseconds (1 minute) |
-| `maxResultsBus`   | *Optional*   | Maximum number of bus results to display <br>Default 5                 |
-| `maxResultsTrain` | *Optional*   | Maximum number of train results to display <br>Default 5               |
+| `maxResultsBus`   | *Optional*   | Maximum number of bus results to display <br>Default `5`               |
+| `maxResultsTrain` | *Optional*   | Maximum number of train results to display <br>Default `5`             |
+| `routeIcons`      | *Optional*   | True/False - Display icons next to routes. <br>Default `true`          |
 
 ### `stops` option
 
