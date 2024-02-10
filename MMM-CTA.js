@@ -95,6 +95,12 @@ Module.register('MMM-CTA', {
     const diffInMilliseconds = new Date(arrivalTime) - now;
     const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60);
 
-    return diffInMinutes === 0 ? 'DUE' : diffInMinutes.toString();
+    if (diffInMinutes === 0) {
+      return 'DUE'
+    } else if (diffInMinutes === 1) {
+      return diffInMinutes.toString() + ' min'
+    } else {
+      return diffInMinutes.toString() + ' mins'
+    }
   },
 });
