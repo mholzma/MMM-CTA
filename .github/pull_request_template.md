@@ -12,7 +12,7 @@ If you would like collaboration feel free to open a draft & ask for help or feed
 
 ## Checklist
 
-- [ ] I have read the [CONTRIBUTING.md]('../CONTRIBUTING.md') document
+- [ ] I have read the [CONTRIBUTING]('../CONTRIBUTING') document
 - [ ] I have updated the documentation as needed
 - [ ] I have added/updated tests to cover my changes
 
