@@ -22,12 +22,13 @@ npm run fix
 
 In an effort to keep this project maintainable, we require all contributions to modify tests to cover the changes. 
 
-Tests can be run with
+Tests are written with [Jest](https://jestjs.io/) and are located in `__tests__`.
+
+They can be run with
 
 ```sh
 npm test
 ```
-
 
 ## Any questions?
 
