@@ -38,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-	  {% if stop.arrivals[0].arrival %}
+	        {% if stop.arrivals[0].arrival %}
             {% for arrival in stop.arrivals %}
               <tr class="small">
                 {% if routeIcons %}
@@ -60,9 +60,9 @@
                 </td>
               </tr>
             {% endfor %}
-	  {% else %}
-	    <td class="small">No planned arrivals.</td>
-	  {% endif %}
+	        {% else %}
+	          <td class="small">No planned arrivals.</td>
+	        {% endif %}
         </tbody>
       </table>
     {% endfor %}
