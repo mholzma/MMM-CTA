@@ -51,6 +51,19 @@ const mockBusFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
   }),
 }));
 
+const mockBusFetchNoService = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
+  json: () => Promise.resolve({
+    'bustime-response': {
+      error: [
+        {
+          stpid: '1234',
+          msg: 'No service scheduled',
+        },
+      ],
+    },
+  }),
+}));
+
 const mockTrainFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
   json: () => Promise.resolve({
     ctatt: {
@@ -287,6 +300,34 @@ describe('node_helper', () => {
               ],
             },
           ],
+        });
+      });
+    });
+
+    describe('No bus service scheduled', () => {
+      beforeEach(() => {
+        mockBusFetchNoService(fetch);
+
+        helper.socketNotificationReceived('MMM-CTA-FETCH', {
+          trainApiKey: null,
+          busApiKey: 'BUS_API_KEY',
+          maxResultsTrain: 5,
+          maxResultsBus: 5,
+          stops: [{
+            type: 'bus',
+            id: '1234',
+            name: 'Mock Stop',
+          }],
+        });
+      });
+
+      it('sends data to client', () => {
+        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+          stops: [{
+            type: 'bus',
+            name: 'Mock Stop',
+            arrivals: [],
+          }],
         });
       });
     });
