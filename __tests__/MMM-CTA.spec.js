@@ -104,7 +104,12 @@ describe('getTemplateData', () => {
           {
             route: '152',
             direction: 'Westbound',
-            arrival: '3',
+            arrival: 'DUE',
+          },
+          {
+            route: '152',
+            direction: 'Westbound',
+            arrival: '1',
           },
           {
             route: '152',
@@ -127,12 +132,17 @@ describe('getTemplateData', () => {
           arrivals: [
             {
               direction: 'Westbound',
-              arrival: '3',
+              arrival: 'DUE',
               routeColor: '',
             },
             {
               direction: 'Westbound',
-              arrival: '27',
+              arrival: '1 min',
+              routeColor: '',
+            },
+            {
+              direction: 'Westbound',
+              arrival: '27 mins',
               routeColor: '',
             },
           ],

@@ -56,7 +56,9 @@ Module.register('MMM-CTA', {
         arrivals: stop.arrivals?.map((arrival) => ({
           direction: arrival.direction,
           routeColor: arrival.routeColor ? `cta-${arrival.routeColor}` : '',
-          arrival: arrival.arrival ?? this.getMinutesUntil(arrival.time),
+          arrival: arrival.arrival
+            ? this.formatMinutes(arrival.arrival)
+            : this.getMinutesUntil(arrival.time),
         })),
       })),
     };
@@ -95,12 +97,22 @@ Module.register('MMM-CTA', {
     const diffInMilliseconds = new Date(arrivalTime) - now;
     const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60);
 
-    if (diffInMinutes === 0) {
+    return this.formatMinutes(diffInMinutes);
+  },
+
+  formatMinutes(minutes) {
+    const minutesInt = parseInt(minutes, 10);
+
+    if (Number.isNaN(minutesInt)) {
+      return minutes;
+    }
+    if (minutesInt === 0) {
       return 'DUE';
-    } if (diffInMinutes === 1) {
-      return `${diffInMinutes.toString()} min`;
+    }
+    if (minutesInt === 1) {
+      return `${minutesInt.toString()} min`;
     }
 
-    return `${diffInMinutes.toString()} mins`;
+    return `${minutesInt.toString()} mins`;
   },
 });
