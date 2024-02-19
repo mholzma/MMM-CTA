@@ -161,3 +161,20 @@ describe('multiple stops', () => {
     expect(template).toContain('Train Stop');
   });
 });
+
+describe('no stops', () => {
+  beforeEach(() => {
+    data = {
+      stops: [{
+        type: 'bus',
+        name: 'Bus Stop',
+        arrivals: [],
+      }],
+    };
+    template = nunjucks.render('MMM-CTA.njk', data);
+  });
+
+  it('shows no arrivals', () => {
+    expect(template).toContain('No scheduled arrivals.');
+  });
+});

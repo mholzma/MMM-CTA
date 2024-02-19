@@ -23,10 +23,10 @@
           </tr>
 
           <tr class="small">
-            {% if routeIcons %}
-              <th class="align-left"></th>
-            {% endif %}
-            {% if stop.arrivals[0].arrival %}
+            {% if stop.arrivals.length %}
+              {% if routeIcons %}
+                <th class="align-left"></th>
+              {% endif %}
               <th class="align-left">
                 {{ "DIRECTION" | translate }}
               </th>
@@ -38,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-	        {% if stop.arrivals[0].arrival %}
+	        {% if stop.arrivals.length %}
             {% for arrival in stop.arrivals %}
               <tr class="small">
                 {% if routeIcons %}
@@ -61,7 +61,7 @@
               </tr>
             {% endfor %}
 	        {% else %}
-	          <td class="small">No planned arrivals.</td>
+	          <td class="small">No scheduled arrivals.</td>
 	        {% endif %}
         </tbody>
       </table>
