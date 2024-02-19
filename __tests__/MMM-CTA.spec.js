@@ -156,7 +156,7 @@ describe('getTemplateData', () => {
       now = new Date();
       jest.useFakeTimers().setSystemTime(now); // Ensures time is consistent
       threeMinutes = new Date();
-      threeMinutes.setMinutes(threeMinutes.getMinutes() + 3);
+      threeMinutes.setMinutes(threeMinutes.getMinutes() + 1);
       twelveMinutes = new Date();
       twelveMinutes.setMinutes(twelveMinutes.getMinutes() + 12);
 
@@ -200,12 +200,12 @@ describe('getTemplateData', () => {
             },
             {
               direction: '95th/Dan Ryan',
-              arrival: '3',
+              arrival: '1 min',
               routeColor: 'cta-red',
             },
             {
               direction: 'Howard',
-              arrival: '12',
+              arrival: '12 mins',
               routeColor: 'cta-green',
             },
           ],
