@@ -118,53 +118,155 @@ const mockTrainFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
   }),
 }));
 
-describe('node_helper', () => {
-  let helper;
-  let fetch;
+let helper;
+let fetch;
 
-  beforeEach(() => {
-    helper = require('../node_helper');
-    Log = require('logger'); // eslint-disable-line import/no-unresolved
-    fetch = require('node-fetch'); // eslint-disable-line import/no-unresolved
+beforeEach(() => {
+  helper = require('../node_helper');
+  Log = require('logger'); // eslint-disable-line import/no-unresolved
+  fetch = require('node-fetch'); // eslint-disable-line import/no-unresolved
 
-    helper.setName('MMM-CTA');
+  helper.setName('MMM-CTA');
+});
+
+describe('socketNotificationReceived', () => {
+  describe('notification does not match MMM-CTA-FETCH', () => {
+    it('does nothing', () => {
+      helper.socketNotificationReceived('NOT-CTA-FETCH', {});
+
+      expect(fetch).not.toHaveBeenCalled();
+    });
   });
 
-  describe('socketNotificationReceived', () => {
-    describe('notification does not match MMM-CTA-FETCH', () => {
-      it('does nothing', () => {
-        helper.socketNotificationReceived('NOT-CTA-FETCH', {});
+  describe('passed proper train config', () => {
+    beforeEach(() => {
+      mockTrainFetch(fetch);
 
-        expect(fetch).not.toHaveBeenCalled();
+      helper.socketNotificationReceived('MMM-CTA-FETCH', {
+        trainApiKey: 'TRAIN_API_KEY',
+        busApiKey: null,
+        maxResultsTrain: 5,
+        maxResultsBus: 5,
+        stops: [{
+          type: 'train',
+          id: '1234',
+          name: 'Mock Stop',
+        }],
       });
     });
 
-    describe('passed proper train config', () => {
-      beforeEach(() => {
-        mockTrainFetch(fetch);
+    it('calls train API with passed arguments', () => {
+      expect(fetch).toHaveBeenCalledWith(
+        'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
+      );
+    });
 
-        helper.socketNotificationReceived('MMM-CTA-FETCH', {
-          trainApiKey: 'TRAIN_API_KEY',
-          busApiKey: null,
-          maxResultsTrain: 5,
-          maxResultsBus: 5,
-          stops: [{
+    it('sends data to client', () => {
+      expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+        stops: [{
+          type: 'train',
+          name: 'Mock Stop',
+          arrivals: [
+            {
+              direction: '95th/Dan Ryan',
+              time: new Date('2024-01-20T21:28:20'),
+              routeColor: 'red',
+            },
+            {
+              direction: 'Howard',
+              time: new Date('2024-01-20T21:32:03'),
+              routeColor: 'green',
+            },
+          ],
+        }],
+      });
+    });
+  });
+
+  describe('passed proper bus config', () => {
+    beforeEach(() => {
+      mockBusFetch(fetch);
+
+      helper.socketNotificationReceived('MMM-CTA-FETCH', {
+        trainApiKey: null,
+        busApiKey: 'BUS_API_KEY',
+        maxResultsTrain: 5,
+        maxResultsBus: 5,
+        stops: [{
+          type: 'bus',
+          id: '1234',
+          name: 'Mock Stop',
+        }],
+      });
+    });
+
+    it('calls bus API with passed arguments', () => {
+      expect(fetch).toHaveBeenCalledWith(
+        'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
+      );
+    });
+
+    it('sends data to client', () => {
+      expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+        stops: [{
+          type: 'bus',
+          name: 'Mock Stop',
+          arrivals: [
+            {
+              route: '152',
+              direction: 'Westbound',
+              arrival: '3',
+            },
+            {
+              route: '152',
+              direction: 'Westbound',
+              arrival: '27',
+            },
+          ],
+        }],
+      });
+    });
+  });
+
+  describe('passed both train and bus configs', () => {
+    beforeEach(() => {
+      mockTrainFetch(fetch);
+      mockBusFetch(fetch);
+
+      helper.socketNotificationReceived('MMM-CTA-FETCH', {
+        trainApiKey: 'TRAIN_API_KEY',
+        busApiKey: 'BUS_API_KEY',
+        maxResultsTrain: 5,
+        maxResultsBus: 5,
+        stops: [
+          {
             type: 'train',
             id: '1234',
             name: 'Mock Stop',
-          }],
-        });
+          },
+          {
+            type: 'bus',
+            id: '1234',
+            name: 'Mock Stop',
+          },
+        ],
       });
+    });
 
-      it('calls train API with passed arguments', () => {
-        expect(fetch).toHaveBeenCalledWith(
-          'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
-        );
-      });
+    it('calls bus API with passed arguments', () => {
+      expect(fetch).toHaveBeenCalledWith(
+        'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
+      );
 
-      it('sends data to client', () => {
-        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
-          stops: [{
+      expect(fetch).toHaveBeenCalledWith(
+        'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
+      );
+    });
+
+    it('sends data to client', () => {
+      expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+        stops: [
+          {
             type: 'train',
             name: 'Mock Stop',
             arrivals: [
@@ -179,37 +281,8 @@ describe('node_helper', () => {
                 routeColor: 'green',
               },
             ],
-          }],
-        });
-      });
-    });
-
-    describe('passed proper bus config', () => {
-      beforeEach(() => {
-        mockBusFetch(fetch);
-
-        helper.socketNotificationReceived('MMM-CTA-FETCH', {
-          trainApiKey: null,
-          busApiKey: 'BUS_API_KEY',
-          maxResultsTrain: 5,
-          maxResultsBus: 5,
-          stops: [{
-            type: 'bus',
-            id: '1234',
-            name: 'Mock Stop',
-          }],
-        });
-      });
-
-      it('calls bus API with passed arguments', () => {
-        expect(fetch).toHaveBeenCalledWith(
-          'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
-        );
-      });
-
-      it('sends data to client', () => {
-        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
-          stops: [{
+          },
+          {
             type: 'bus',
             name: 'Mock Stop',
             arrivals: [
@@ -224,111 +297,36 @@ describe('node_helper', () => {
                 arrival: '27',
               },
             ],
-          }],
-        });
+          },
+        ],
+      });
+    });
+  });
+
+  describe('No bus service scheduled', () => {
+    beforeEach(() => {
+      mockBusFetchNoService(fetch);
+
+      helper.socketNotificationReceived('MMM-CTA-FETCH', {
+        trainApiKey: null,
+        busApiKey: 'BUS_API_KEY',
+        maxResultsTrain: 5,
+        maxResultsBus: 5,
+        stops: [{
+          type: 'bus',
+          id: '1234',
+          name: 'Mock Stop',
+        }],
       });
     });
 
-    describe('passed both train and bus configs', () => {
-      beforeEach(() => {
-        mockTrainFetch(fetch);
-        mockBusFetch(fetch);
-
-        helper.socketNotificationReceived('MMM-CTA-FETCH', {
-          trainApiKey: 'TRAIN_API_KEY',
-          busApiKey: 'BUS_API_KEY',
-          maxResultsTrain: 5,
-          maxResultsBus: 5,
-          stops: [
-            {
-              type: 'train',
-              id: '1234',
-              name: 'Mock Stop',
-            },
-            {
-              type: 'bus',
-              id: '1234',
-              name: 'Mock Stop',
-            },
-          ],
-        });
-      });
-
-      it('calls bus API with passed arguments', () => {
-        expect(fetch).toHaveBeenCalledWith(
-          'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
-        );
-
-        expect(fetch).toHaveBeenCalledWith(
-          'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
-        );
-      });
-
-      it('sends data to client', () => {
-        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
-          stops: [
-            {
-              type: 'train',
-              name: 'Mock Stop',
-              arrivals: [
-                {
-                  direction: '95th/Dan Ryan',
-                  time: new Date('2024-01-20T21:28:20'),
-                  routeColor: 'red',
-                },
-                {
-                  direction: 'Howard',
-                  time: new Date('2024-01-20T21:32:03'),
-                  routeColor: 'green',
-                },
-              ],
-            },
-            {
-              type: 'bus',
-              name: 'Mock Stop',
-              arrivals: [
-                {
-                  route: '152',
-                  direction: 'Westbound',
-                  arrival: '3',
-                },
-                {
-                  route: '152',
-                  direction: 'Westbound',
-                  arrival: '27',
-                },
-              ],
-            },
-          ],
-        });
-      });
-    });
-
-    describe('No bus service scheduled', () => {
-      beforeEach(() => {
-        mockBusFetchNoService(fetch);
-
-        helper.socketNotificationReceived('MMM-CTA-FETCH', {
-          trainApiKey: null,
-          busApiKey: 'BUS_API_KEY',
-          maxResultsTrain: 5,
-          maxResultsBus: 5,
-          stops: [{
-            type: 'bus',
-            id: '1234',
-            name: 'Mock Stop',
-          }],
-        });
-      });
-
-      it('sends data to client', () => {
-        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
-          stops: [{
-            type: 'bus',
-            name: 'Mock Stop',
-            arrivals: [],
-          }],
-        });
+    it('sends data to client', () => {
+      expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+        stops: [{
+          type: 'bus',
+          name: 'Mock Stop',
+          arrivals: [],
+        }],
       });
     });
   });
