@@ -24,6 +24,7 @@ it('has a default config', () => {
     maxResultsTrain: 5,
     maxResultsBus: 5,
     routeIcons: true,
+    suffixStyle: 'long',
     stops: [],
   });
 });
@@ -278,6 +279,46 @@ describe('socketNotificationReceived', () => {
       MMMCTA.socketNotificationReceived('NOT-MMM-CTA-DATA', payload);
 
       expect(MMMCTA.data.stops).toEqual(undefined);
+    });
+  });
+});
+
+describe('minutesWithSuffix', () => {
+  describe('suffix style is long', () => {
+    beforeEach(() => {
+      MMMCTA.setConfig({ suffixStyle: 'long' });
+    });
+
+    it('returns min for singular', () => {
+      expect(MMMCTA.minutesWithSuffix(1)).toBe('1 min');
+    });
+
+    it('returns mins for plural', () => {
+      expect(MMMCTA.minutesWithSuffix(2)).toBe('2 mins');
+    });
+  });
+
+  describe('suffix style is short', () => {
+    beforeEach(() => {
+      MMMCTA.setConfig({ suffixStyle: 'short' });
+    });
+
+    it('returns m for singular', () => {
+      expect(MMMCTA.minutesWithSuffix(1)).toBe('1m');
+    });
+
+    it('returns m for plural', () => {
+      expect(MMMCTA.minutesWithSuffix(2)).toBe('2m');
+    });
+  });
+
+  describe('suffix style is none', () => {
+    beforeEach(() => {
+      MMMCTA.setConfig({ suffixStyle: 'none' });
+    });
+
+    it('returns number', () => {
+      expect(MMMCTA.minutesWithSuffix(1)).toBe('1');
     });
   });
 });

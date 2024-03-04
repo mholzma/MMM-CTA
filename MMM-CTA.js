@@ -15,6 +15,7 @@ Module.register('MMM-CTA', {
     maxResultsBus: 5,
     maxResultsTrain: 5,
     routeIcons: true,
+    suffixStyle: 'long',
     stops: [],
   },
 
@@ -109,10 +110,22 @@ Module.register('MMM-CTA', {
     if (minutesInt === 0) {
       return 'DUE';
     }
-    if (minutesInt === 1) {
-      return `${minutesInt.toString()} min`;
-    }
+    return this.minutesWithSuffix(minutesInt);
+  },
 
-    return `${minutesInt.toString()} mins`;
+  minutesWithSuffix(minutes) {
+    switch (this.config.suffixStyle) {
+      case 'none':
+        return minutes.toString();
+      case 'short':
+        return `${minutes.toString()}m`;
+      case 'long':
+      default:
+        if (minutes === 1) {
+          return `${minutes.toString()} min`;
+        }
+
+        return `${minutes.toString()} mins`;
+    }
   },
 });
