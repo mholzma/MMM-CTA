@@ -16,6 +16,7 @@ Module.register('MMM-CTA', {
     maxResultsTrain: 5,
     routeIcons: true,
     suffixStyle: 'long',
+    showHeaders: true,
     stops: [],
   },
 
@@ -52,6 +53,7 @@ Module.register('MMM-CTA', {
     return {
       loading: this.loading,
       routeIcons: this.config.routeIcons,
+      showHeaders: this.config.showHeaders,
       stops: this.data.stops?.map((stop) => ({
         ...stop,
         arrivals: stop.arrivals?.map((arrival) => ({

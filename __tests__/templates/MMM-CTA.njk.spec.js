@@ -135,6 +135,40 @@ describe('bus stop', () => {
       expect(template).not.toContain('fa-bus');
     });
   });
+
+  describe('showHeaders turned on', () => {
+    beforeEach(() => {
+      data.showHeaders = true;
+      template = nunjucks.render('MMM-CTA.njk', data);
+      data.stops = [{
+        type: 'bus',
+        name: 'Bus Stop',
+        arrivals: [
+          {
+            direction: 'North',
+            arrival: 5,
+          },
+        ],
+      }];
+    });
+
+    it('shows headers', () => {
+      expect(template).toContain('DIRECTION');
+      expect(template).toContain('ARRIVAL');
+    });
+  });
+
+  describe('showHeaders turned off', () => {
+    beforeEach(() => {
+      data.showHeaders = false;
+      template = nunjucks.render('MMM-CTA.njk', data);
+    });
+
+    it('does not show headers', () => {
+      expect(template).not.toContain('DIRECTION');
+      expect(template).not.toContain('ARRIVAL');
+    });
+  });
 });
 
 describe('multiple stops', () => {

@@ -25,6 +25,7 @@ it('has a default config', () => {
     maxResultsBus: 5,
     routeIcons: true,
     suffixStyle: 'long',
+    showHeaders: true,
     stops: [],
   });
 });
@@ -127,6 +128,7 @@ describe('getTemplateData', () => {
       expect(MMMCTA.getTemplateData()).toEqual({
         loading: MMMCTA.loading,
         routeIcons: MMMCTA.config.routeIcons,
+        showHeaders: MMMCTA.config.showHeaders,
         stops: [{
           type: 'bus',
           name: 'Mock Stop',
@@ -158,6 +160,16 @@ describe('getTemplateData', () => {
 
       it('returns routeIcons false', () => {
         expect(MMMCTA.getTemplateData().routeIcons).toEqual(false);
+      });
+    });
+
+    describe('showHeaders turned off', () => {
+      beforeEach(() => {
+        MMMCTA.setConfig({ showHeaders: false });
+      });
+
+      it('returns showHeaders false', () => {
+        expect(MMMCTA.getTemplateData().showHeaders).toEqual(false);
       });
     });
   });
@@ -200,6 +212,7 @@ describe('getTemplateData', () => {
       expect(MMMCTA.getTemplateData()).toEqual({
         loading: MMMCTA.loading,
         routeIcons: MMMCTA.config.routeIcons,
+        showHeaders: MMMCTA.config.showHeaders,
         stops: [{
           type: 'train',
           name: 'Mock Stop',
