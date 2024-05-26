@@ -22,20 +22,22 @@
             </td>
           </tr>
 
-          <tr class="small">
-            {% if stop.arrivals.length %}
-              {% if routeIcons %}
-                <th class="align-left"></th>
-              {% endif %}
-              <th class="align-left">
-                {{ "DIRECTION" | translate }}
-              </th>
+          {% if showHeaders %}
+            <tr class="small">
+              {% if stop.arrivals.length %}
+                {% if routeIcons %}
+                  <th class="align-left"></th>
+                {% endif %}
+                <th class="align-left">
+                  {{ "DIRECTION" | translate }}
+                </th>
 
-              <th class="align-right">
-                {{ "ARRIVAL" | translate }}
-              </th>
-            {% endif %}
-          </tr>
+                <th class="align-right">
+                  {{ "ARRIVAL" | translate }}
+                </th>
+              {% endif %}
+            </tr>
+          {% endif %}
         </thead>
         <tbody>
 	        {% if stop.arrivals.length %}

@@ -55,6 +55,7 @@ var config = {
 | `maxResultsBus`   | *Optional*   | Maximum number of bus results to display <br>Default `5`                            |
 | `maxResultsTrain` | *Optional*   | Maximum number of train results to display <br>Default `5`                          |
 | `routeIcons`      | *Optional*   | True/False - Display icons next to routes. <br>Default `true`                       |
+| `showHeaders`     | *Optional*   | True/False - Display headers for each stop. <br>Default `true`                      |
 | `suffixStyle`     | *Optional*   | Style of suffix for the arrival time. `long`, `short`, or `none` <br>Default `long` |
 
 ### `stops` option
