@@ -13,11 +13,7 @@ In ~/MagicMirror/modules
 git clone https://github.com/JHWelch/MMM-CTA.git
 ```
 
-Install NPM dependencies
-```sh
-cd MMM-CTA
-npm install --production
-```
+No dependencies are required for usage. See below for development dependencies.
 
 ## Obtaining CTA API keys
 
@@ -96,6 +92,8 @@ The `stops` option is an array of objects. Each object represents a stop to disp
 ## Development
 
 ### Installation
+
+Install dev dependencies
 
 ```sh
 npm install

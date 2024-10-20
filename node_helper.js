@@ -5,7 +5,6 @@
  * MIT Licensed.
  */
 
-const fetch = require('node-fetch');
 const Log = require('logger');
 const NodeHelper = require('node_helper');
 
