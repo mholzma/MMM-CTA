@@ -31,7 +31,7 @@ it('has a default config', () => {
 });
 
 it('requires expected version', () => {
-  expect(MMMCTA.requiresVersion).toBe('2.2.0');
+  expect(MMMCTA.requiresVersion).toBe('2.28.0');
 });
 
 it('inits module in loading state', () => {

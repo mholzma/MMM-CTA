@@ -1,11 +1,17 @@
+const { default: fetchMock } = require('fetch-mock');
+
 /* eslint-disable global-require */
 beforeAll(() => {
   require('../__mocks__/logger');
-  require('../__mocks__/node-fetch');
 });
 
-const mockBusFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
-  json: () => Promise.resolve({
+afterEach(() => {
+  fetchMock.restore();
+});
+
+const mockBusFetch = () => fetchMock.get(
+  'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
+  {
     'bustime-response': {
       prd: [
         {
@@ -48,11 +54,12 @@ const mockBusFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
         },
       ],
     },
-  }),
-}));
+  },
+);
 
-const mockBusFetchNoService = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
-  json: () => Promise.resolve({
+const mockBusFetchNoService = () => fetchMock.get(
+  'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
+  {
     'bustime-response': {
       error: [
         {
@@ -61,11 +68,12 @@ const mockBusFetchNoService = (fetch) => fetch.mockReturnValueOnce(Promise.resol
         },
       ],
     },
-  }),
-}));
+  },
+);
 
-const mockTrainFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
-  json: () => Promise.resolve({
+const mockTrainFetch = () => fetchMock.get(
+  'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
+  {
     ctatt: {
       tmst: '2024-01-20T21:23:30',
       errCd: '0',
@@ -115,8 +123,8 @@ const mockTrainFetch = (fetch) => fetch.mockReturnValueOnce(Promise.resolve({
         },
       ],
     },
-  }),
-}));
+  },
+);
 
 let helper;
 let fetch;
@@ -124,7 +132,6 @@ let fetch;
 beforeEach(() => {
   helper = require('../node_helper');
   Log = require('logger'); // eslint-disable-line import/no-unresolved
-  fetch = require('node-fetch'); // eslint-disable-line import/no-unresolved
 
   helper.setName('MMM-CTA');
 });
@@ -134,13 +141,13 @@ describe('socketNotificationReceived', () => {
     it('does nothing', () => {
       helper.socketNotificationReceived('NOT-CTA-FETCH', {});
 
-      expect(fetch).not.toHaveBeenCalled();
+      expect(fetchMock.calls).toHaveLength(0);
     });
   });
 
   describe('passed proper train config', () => {
     beforeEach(() => {
-      mockTrainFetch(fetch);
+      mockTrainFetch();
 
       helper.socketNotificationReceived('MMM-CTA-FETCH', {
         trainApiKey: 'TRAIN_API_KEY',
@@ -156,7 +163,7 @@ describe('socketNotificationReceived', () => {
     });
 
     it('calls train API with passed arguments', () => {
-      expect(fetch).toHaveBeenCalledWith(
+      expect(fetchMock.calls(true)[0][0]).toBe(
         'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
       );
     });
@@ -201,7 +208,7 @@ describe('socketNotificationReceived', () => {
     });
 
     it('calls bus API with passed arguments', () => {
-      expect(fetch).toHaveBeenCalledWith(
+      expect(fetchMock.calls()[0][0]).toBe(
         'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
       );
     });
@@ -254,11 +261,11 @@ describe('socketNotificationReceived', () => {
     });
 
     it('calls bus API with passed arguments', () => {
-      expect(fetch).toHaveBeenCalledWith(
+      expect(fetchMock.calls()[0][0]).toBe(
         'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
       );
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(fetchMock.calls()[1][0]).toBe(
         'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
       );
     });
