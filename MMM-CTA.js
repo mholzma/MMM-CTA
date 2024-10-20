@@ -24,7 +24,7 @@ Module.register('MMM-CTA', {
 
   loading: true,
 
-  start() {
+  start () {
     Log.info(`Starting module: ${this.name}`);
     const self = this;
 
@@ -35,7 +35,7 @@ Module.register('MMM-CTA', {
     }, this.config.updateInterval);
   },
 
-  getData() {
+  getData () {
     this.sendSocketNotification('MMM-CTA-FETCH', {
       trainApiKey: this.config.trainApiKey,
       busApiKey: this.config.busApiKey,
@@ -45,11 +45,11 @@ Module.register('MMM-CTA', {
     });
   },
 
-  getTemplate() {
+  getTemplate () {
     return 'templates/MMM-CTA.njk';
   },
 
-  getTemplateData() {
+  getTemplateData () {
     return {
       loading: this.loading,
       routeIcons: this.config.routeIcons,
@@ -67,25 +67,25 @@ Module.register('MMM-CTA', {
     };
   },
 
-  getScripts() {
+  getScripts () {
     return [];
   },
 
-  getStyles() {
+  getStyles () {
     return [
       'font-awesome.css',
       'MMM-CTA.css',
     ];
   },
 
-  getTranslations() {
+  getTranslations () {
     return {
       en: 'translations/en.json',
       es: 'translations/es.json',
     };
   },
 
-  socketNotificationReceived(notification, payload) {
+  socketNotificationReceived (notification, payload) {
     if (notification !== 'MMM-CTA-DATA') {
       return;
     }
@@ -95,7 +95,7 @@ Module.register('MMM-CTA', {
     this.updateDom(300);
   },
 
-  getMinutesUntil(arrivalTime) {
+  getMinutesUntil (arrivalTime) {
     const now = new Date();
     const diffInMilliseconds = new Date(arrivalTime) - now;
     const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60);
@@ -103,7 +103,7 @@ Module.register('MMM-CTA', {
     return this.formatMinutes(diffInMinutes);
   },
 
-  formatMinutes(minutes) {
+  formatMinutes (minutes) {
     const minutesInt = parseInt(minutes, 10);
 
     if (Number.isNaN(minutesInt)) {
@@ -115,19 +115,19 @@ Module.register('MMM-CTA', {
     return this.minutesWithSuffix(minutesInt);
   },
 
-  minutesWithSuffix(minutes) {
+  minutesWithSuffix (minutes) {
     switch (this.config.suffixStyle) {
-      case 'none':
-        return minutes.toString();
-      case 'short':
-        return `${minutes.toString()}m`;
-      case 'long':
-      default:
-        if (minutes === 1) {
-          return `${minutes.toString()} min`;
-        }
+    case 'none':
+      return minutes.toString();
+    case 'short':
+      return `${minutes.toString()}m`;
+    case 'long':
+    default:
+      if (minutes === 1) {
+        return `${minutes.toString()} min`;
+      }
 
-        return `${minutes.toString()} mins`;
+      return `${minutes.toString()} mins`;
     }
   },
 });

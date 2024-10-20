@@ -1,12 +1,12 @@
-/* eslint-disable no-param-reassign */
+ 
 global.Module = {
   definitions: {},
 
-  create(name) {
+  create (name) {
     return this.definitions[name];
   },
 
-  register(name, overrides) {
+  register (name, overrides) {
     const base = {
       requiresVersion: '2.0.0',
 
@@ -18,33 +18,33 @@ global.Module = {
 
       _nunjucksEnvironment: { addFilter: jest.fn() },
 
-      init() {
+      init () {
         Log.log(this.defaults);
       },
 
-      start() {
+      start () {
         Log.info(`Starting module: ${this.name}`);
       },
 
-      getScripts() {
+      getScripts () {
         return [];
       },
 
-      getStyles() {
+      getStyles () {
         return [];
       },
 
-      getTranslations() {
+      getTranslations () {
         return false;
       },
 
       getDom: jest.fn(),
 
-      getHeader() {
+      getHeader () {
         return this.data.header;
       },
 
-      getTemplate() {
+      getTemplate () {
         return (
           `<div class="normal">${
             this.name
@@ -54,11 +54,11 @@ global.Module = {
         );
       },
 
-      getTemplateData() {
+      getTemplateData () {
         return {};
       },
 
-      notificationReceived(notification, payload, sender) {
+      notificationReceived (notification, payload, sender) {
         if (sender) {
           Log.log(
             `${this.name
@@ -74,11 +74,11 @@ global.Module = {
         }
       },
 
-      nunjucksEnvironment() {
+      nunjucksEnvironment () {
         return this._nunjucksEnvironment;
       },
 
-      socketNotificationReceived(notification, payload) {
+      socketNotificationReceived (notification, payload) {
         Log.log(
           `${this.name
           } received a socket notification: ${
@@ -88,15 +88,15 @@ global.Module = {
         );
       },
 
-      suspend() {
+      suspend () {
         Log.log(`${this.name} is suspended.`);
       },
 
-      resume() {
+      resume () {
         Log.log(`${this.name} is resumed.`);
       },
 
-      setData(data) {
+      setData (data) {
         this.data = data;
         this.name = data.name;
         this.identifier = data.identifier;
@@ -105,7 +105,7 @@ global.Module = {
         this.setConfig(data.config, data.configDeepMerge);
       },
 
-      setConfig(config) {
+      setConfig (config) {
         this.config = { ...this.defaults, ...config };
       },
 

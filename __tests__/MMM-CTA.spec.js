@@ -1,8 +1,5 @@
-/* eslint-disable global-require */
-beforeAll(() => {
-  require('../__mocks__/Module');
-  require('../__mocks__/globalLogger');
-});
+require('../__mocks__/Module');
+require('../__mocks__/globalLogger');
 
 const name = 'MMM-CTA';
 
@@ -176,11 +173,11 @@ describe('getTemplateData', () => {
 
   describe('train information', () => {
     beforeEach(() => {
-      now = new Date();
+      const now = new Date();
       jest.useFakeTimers().setSystemTime(now); // Ensures time is consistent
-      threeMinutes = new Date();
+      const threeMinutes = new Date();
       threeMinutes.setMinutes(threeMinutes.getMinutes() + 1);
-      twelveMinutes = new Date();
+      const twelveMinutes = new Date();
       twelveMinutes.setMinutes(twelveMinutes.getMinutes() + 12);
 
       stops = [{

@@ -1,24 +1,24 @@
 /* eslint-disable no-unused-vars */
 module.exports = {
-  create(overrides) {
+  create (overrides) {
     const base = {
-      init() {},
+      init () {},
 
-      loaded(callback) {
+      loaded (callback) {
         callback();
       },
 
-      start() {},
+      start () {},
 
-      stop() {},
+      stop () {},
 
-      socketNotificationReceived(notification, payload) {},
+      socketNotificationReceived (notification, payload) {},
 
-      setName(name) {
+      setName (name) {
         this.name = name;
       },
 
-      setPath(path) {
+      setPath (path) {
         this.path = path;
       },
 
