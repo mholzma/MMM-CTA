@@ -1,6 +1,5 @@
 const { default: fetchMock } = require('fetch-mock');
 
-/* eslint-disable global-require */
 beforeAll(() => {
   require('../__mocks__/logger');
 });
@@ -131,8 +130,6 @@ let fetch;
 
 beforeEach(() => {
   helper = require('../node_helper');
-  Log = require('logger'); // eslint-disable-line import/no-unresolved
-
   helper.setName('MMM-CTA');
 });
 
