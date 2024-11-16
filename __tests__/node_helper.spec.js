@@ -1,14 +1,19 @@
-const { default: fetchMock } = require('fetch-mock');
+const fetchMock = require('@fetch-mock/jest').default;
+const { manageFetchMockGlobally } = require('@fetch-mock/jest');
 
 beforeAll(() => {
   require('../__mocks__/logger');
 });
 
-afterEach(() => {
-  fetchMock.restore();
+beforeEach(() => {
+  manageFetchMockGlobally(jest);
 });
 
-const mockBusFetch = () => fetchMock.get(
+afterEach(() => {
+  fetchMock.mockReset();
+});
+
+const mockBusFetch = () => fetchMock.mockGlobal().get(
   'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
   {
     'bustime-response': {
@@ -56,7 +61,7 @@ const mockBusFetch = () => fetchMock.get(
   },
 );
 
-const mockBusFetchNoService = () => fetchMock.get(
+const mockBusFetchNoService = () => fetchMock.mockGlobal().get(
   'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
   {
     'bustime-response': {
@@ -70,7 +75,7 @@ const mockBusFetchNoService = () => fetchMock.get(
   },
 );
 
-const mockTrainFetch = () => fetchMock.get(
+const mockTrainFetch = () => fetchMock.mockGlobal().get(
   'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
   {
     ctatt: {
@@ -138,7 +143,7 @@ describe('socketNotificationReceived', () => {
     it('does nothing', () => {
       helper.socketNotificationReceived('NOT-CTA-FETCH', {});
 
-      expect(fetchMock.calls).toHaveLength(0);
+      expect(fetchMock.callHistory.callLogs).toHaveLength(0);
     });
   });
 
@@ -160,7 +165,7 @@ describe('socketNotificationReceived', () => {
     });
 
     it('calls train API with passed arguments', () => {
-      expect(fetchMock.calls(true)[0][0]).toBe(
+      expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
         'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
       );
     });
@@ -205,7 +210,7 @@ describe('socketNotificationReceived', () => {
     });
 
     it('calls bus API with passed arguments', () => {
-      expect(fetchMock.calls()[0][0]).toBe(
+      expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
         'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
       );
     });
@@ -258,11 +263,11 @@ describe('socketNotificationReceived', () => {
     });
 
     it('calls bus API with passed arguments', () => {
-      expect(fetchMock.calls()[0][0]).toBe(
+      expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
         'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
       );
 
-      expect(fetchMock.calls()[1][0]).toBe(
+      expect(fetchMock.callHistory.callLogs[1].args[0]).toBe(
         'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
       );
     });
