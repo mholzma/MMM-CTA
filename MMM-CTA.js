@@ -112,6 +112,7 @@ Module.register('MMM-CTA', {
     if (minutesInt === 0) {
       return 'DUE';
     }
+
     return this.minutesWithSuffix(minutesInt);
   },
 
