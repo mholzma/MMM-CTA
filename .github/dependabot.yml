@@ -9,7 +9,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
     groups:
       actions-dependencies:
         patterns:
@@ -19,9 +19,8 @@ updates:
     directory: /
     versioning-strategy: increase
     schedule:
-      interval: weekly
+      interval: monthly
     groups:
-      development-dependencies:
-        dependency-type: development
-      production-dependencies:
-        dependency-type: production
+      all-dependencies:
+        patterns:
+          - "*"
