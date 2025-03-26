@@ -86,6 +86,7 @@ module.exports = NodeHelper.create({
 
     return data.eta.filter((train) => {
       const arrivalTime = new Date(train.arrT);
+
       return arrivalTime - Date.now() > minimumArrivalTime;
     }).map((train) => ({
       direction: train.destNm,
