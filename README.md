@@ -69,17 +69,19 @@ The `stops` option is an array of objects. Each object represents a stop to disp
     {
       type: 'train',
       id: 41410,
-      name: 'Blue Line'
+      name: 'Blue Line',
+      minimumArrivalTime: 600000,
     }
   ]
 }
 ```
 
-| Property | Description                                                          |
-| -------- | -------------------------------------------------------------------- |
-| `type`   | Type of stop. Either `bus` or `train`                                |
-| `id`     | Stop ID. See [Finding Stop IDs](#finding-stop-ids)                   |
-| `name`   | Name of stop. This is displayed in the header of the stop's results. |
+| Property              | Description                                                                         |
+| --------              | ----------------------------------------------------------------------------------- |
+| `type`                | Type of stop. Either `bus` or `train`                                               |
+| `id`                  | Stop ID. See [Finding Stop IDs](#finding-stop-ids)                                  |
+| `name`                | Name of stop. This is displayed in the header of the stop's results.                |
+| `minimumArrivalTime`  | The minimum time to arrival for the bus or train to be displayed. In ms. Default 0. |
 
 ### Finding Stop IDs
 
