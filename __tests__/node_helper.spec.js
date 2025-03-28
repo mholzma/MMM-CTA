@@ -136,6 +136,7 @@ let fetch;
 beforeEach(() => {
   helper = require('../node_helper');
   helper.setName('MMM-CTA');
+  jest.useFakeTimers().setSystemTime(new Date('2024-01-20T21:27:00'));
 });
 
 describe('socketNotificationReceived', () => {
@@ -190,6 +191,41 @@ describe('socketNotificationReceived', () => {
         }],
       });
     });
+
+    describe('minimumArrivalTime is set', () => {
+      beforeEach(() => {
+        mockTrainFetch();
+  
+        helper.socketNotificationReceived('MMM-CTA-FETCH', {
+          trainApiKey: 'TRAIN_API_KEY',
+          busApiKey: null,
+          maxResultsTrain: 5,
+          maxResultsBus: 5,
+          stops: [{
+            type: 'train',
+            id: '1234',
+            name: 'Mock Stop',
+            minimumArrivalTime: 120000,
+          }],
+        });
+      });
+
+      it('sends data to client', () => {
+        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+          stops: [{
+            type: 'train',
+            name: 'Mock Stop',
+            arrivals: [
+              {
+                direction: 'Howard',
+                time: new Date('2024-01-20T21:32:03'),
+                routeColor: 'green',
+              },
+            ],
+          }],
+        });
+      });
+    });
   });
 
   describe('passed proper bus config', () => {
@@ -233,6 +269,41 @@ describe('socketNotificationReceived', () => {
             },
           ],
         }],
+      });
+    });
+
+    describe('minimumArrivalTime is set', () => {
+      beforeEach(() => {
+        mockBusFetch(fetch);
+  
+        helper.socketNotificationReceived('MMM-CTA-FETCH', {
+          trainApiKey: null,
+          busApiKey: 'BUS_API_KEY',
+          maxResultsTrain: 5,
+          maxResultsBus: 5,
+          stops: [{
+            type: 'bus',
+            id: '1234',
+            name: 'Mock Stop',
+            minimumArrivalTime: 240000,
+          }],
+        });
+      });
+
+      it('sends data to client', () => {
+        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+          stops: [{
+            type: 'bus',
+            name: 'Mock Stop',
+            arrivals: [
+              {
+                route: '152',
+                direction: 'Westbound',
+                arrival: '27',
+              },
+            ],
+          }],
+        });
       });
     });
   });

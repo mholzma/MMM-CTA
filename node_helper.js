@@ -36,6 +36,7 @@ module.exports = NodeHelper.create({
             stop.id,
             maxResultsTrain,
             trainApiKey,
+            stop.minimumArrivalTime ?? 0,
           ),
         };
       }
@@ -47,6 +48,7 @@ module.exports = NodeHelper.create({
           stop.id,
           maxResultsBus,
           busApiKey,
+          stop.minimumArrivalTime ?? 0,
         ),
       };
     }));
@@ -56,22 +58,25 @@ module.exports = NodeHelper.create({
     });
   },
 
-  async getBusData (id, maxResults, apiKey) {
+  async getBusData (id, maxResults, apiKey, minimumArrivalTime) {
     const response = await fetch(this.busUrl(id, maxResults, apiKey));
     const { 'bustime-response': data } = await response.json();
+    const minimumArrivalTimeMinutes = minimumArrivalTime / 1000 / 60;
 
     if (!data?.prd) {
       return [];
     }
 
-    return data.prd.map((bus) => ({
+    return data.prd.filter((bus) => {
+      return bus.prdctdn >= minimumArrivalTimeMinutes;
+    }).map((bus) => ({
       route: bus.rt,
       direction: bus.rtdir,
       arrival: bus.prdctdn,
     }));
   },
 
-  async getTrainData (id, maxResults, apiKey) {
+  async getTrainData (id, maxResults, apiKey, minimumArrivalTime) {
     const response = await fetch(this.trainUrl(id, maxResults, apiKey));
     const { ctatt: data } = await response.json();
 
@@ -79,7 +84,11 @@ module.exports = NodeHelper.create({
       return [];
     }
 
-    return data.eta.map((train) => ({
+    return data.eta.filter((train) => {
+      const arrivalTime = new Date(train.arrT);
+
+      return arrivalTime - Date.now() > minimumArrivalTime;
+    }).map((train) => ({
       direction: train.destNm,
       routeColor: this.routeToColor(train.rt),
       time: new Date(train.arrT),
