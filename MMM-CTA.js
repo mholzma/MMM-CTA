@@ -121,17 +121,17 @@ Module.register('MMM-CTA', {
 
   minutesWithSuffix (minutes) {
     switch (this.config.suffixStyle) {
-    case 'none':
-      return minutes.toString();
-    case 'short':
-      return `${minutes.toString()}m`;
-    case 'long':
-    default:
-      if (minutes === 1) {
-        return `${minutes.toString()} min`;
-      }
+      case 'none':
+        return minutes.toString();
+      case 'short':
+        return `${minutes.toString()}m`;
+      case 'long':
+      default:
+        if (minutes === 1) {
+          return `${minutes.toString()} min`;
+        }
 
-      return `${minutes.toString()} mins`;
+        return `${minutes.toString()} mins`;
     }
   },
 });

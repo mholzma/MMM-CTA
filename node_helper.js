@@ -59,7 +59,11 @@ module.exports = NodeHelper.create({
   },
 
   async getBusData (id, maxResults, apiKey, minimumArrivalTime) {
-    const response = await fetch(this.busUrl(id, maxResults, apiKey));
+    const response = await fetch(this.busUrl({
+      id,
+      apiKey,
+      maxResults: minimumArrivalTime > 0 ? null : maxResults,
+    }));
     const { 'bustime-response': data } = await response.json();
     const minimumArrivalTimeMinutes = minimumArrivalTime / 1000 / 60;
 
@@ -73,11 +77,15 @@ module.exports = NodeHelper.create({
       route: bus.rt,
       direction: bus.rtdir,
       arrival: bus.prdctdn,
-    }));
+    })).slice(0, maxResults);
   },
 
   async getTrainData (id, maxResults, apiKey, minimumArrivalTime) {
-    const response = await fetch(this.trainUrl(id, maxResults, apiKey));
+    const response = await fetch(this.trainUrl({
+      id,
+      apiKey,
+      maxResults: minimumArrivalTime > 0 ? null : maxResults,
+    }));
     const { ctatt: data } = await response.json();
 
     if (!data?.eta) {
@@ -92,7 +100,7 @@ module.exports = NodeHelper.create({
       direction: train.destNm,
       routeColor: this.routeToColor(train.rt),
       time: new Date(train.arrT),
-    }));
+    })).slice(0, maxResults);
   },
 
   validate (payload) {
@@ -113,16 +121,26 @@ module.exports = NodeHelper.create({
     return valid;
   },
 
-  busUrl (id, maxResults, apiKey) {
-    const baseUrl = 'http://www.ctabustracker.com/bustime/api/v2/getpredictions';
+  busUrl ({id, apiKey, maxResults = null}) {
+    const params = new URLSearchParams({
+      key: apiKey,
+      stpid: id,
+      format: 'json',
+      ...(maxResults && { top: maxResults }),
+    });
 
-    return `${baseUrl}?key=${apiKey}&stpid=${id}&top=${maxResults}&format=json`;
+    return `http://www.ctabustracker.com/bustime/api/v2/getpredictions?${params.toString()}`;
   },
 
-  trainUrl (id, maxResults, apiKey) {
-    const baseUrl = 'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx';
+  trainUrl ({id, apiKey, maxResults = null}) {
+    const params = new URLSearchParams({
+      key: apiKey,
+      mapid: id,
+      outputType: 'json',
+      ...(maxResults && { max: maxResults }),
+    });
 
-    return `${baseUrl}?key=${apiKey}&mapid=${id}&max=${maxResults}&outputType=json`; // eslint-disable-line @stylistic/max-len
+    return `http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?${params.toString()}`;
   },
 
   routeToColor (route) {
