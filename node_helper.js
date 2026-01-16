@@ -77,7 +77,7 @@ module.exports = NodeHelper.create({
       route: bus.rt,
       direction: bus.rtdir,
       arrival: bus.prdctdn,
-    }));
+    })).slice(0, maxResults);
   },
 
   async getTrainData (id, maxResults, apiKey, minimumArrivalTime) {
