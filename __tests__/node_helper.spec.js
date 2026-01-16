@@ -13,56 +13,63 @@ afterEach(() => {
   fetchMock.mockReset();
 });
 
-const mockBusFetch = () => fetchMock.mockGlobal().get(
-  'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
-  {
-    'bustime-response': {
-      prd: [
-        {
-          tmstmp: '20240120 20:26',
-          typ: 'A',
-          stpnm: 'Addison & Lakewood',
-          stpid: '12557',
-          vid: '1637',
-          dstp: 2042,
-          rt: '152',
-          rtdd: '152',
-          rtdir: 'Westbound',
-          des: 'Cumberland',
-          prdtm: '20240120 20:29',
-          tablockid: '152 -403',
-          tatripid: '88355271',
-          origtatripno: '251994266',
-          dly: false,
-          prdctdn: '3',
-          zone: '',
-        },
-        {
-          tmstmp: '20240120 20:26',
-          typ: 'A',
-          stpnm: 'Addison & Lakewood',
-          stpid: '12557',
-          vid: '1408',
-          dstp: 10603,
-          rt: '152',
-          rtdd: '152',
-          rtdir: 'Westbound',
-          des: 'Cumberland',
-          prdtm: '20240120 20:54',
-          tablockid: '152 -406',
-          tatripid: '88355270',
-          origtatripno: '251994148',
-          dly: false,
-          prdctdn: '27',
-          zone: '',
-        },
-      ],
-    },
+const busData = {
+  'bustime-response': {
+    prd: [
+      {
+        tmstmp: '20240120 20:26',
+        typ: 'A',
+        stpnm: 'Addison & Lakewood',
+        stpid: '12557',
+        vid: '1637',
+        dstp: 2042,
+        rt: '152',
+        rtdd: '152',
+        rtdir: 'Westbound',
+        des: 'Cumberland',
+        prdtm: '20240120 20:29',
+        tablockid: '152 -403',
+        tatripid: '88355271',
+        origtatripno: '251994266',
+        dly: false,
+        prdctdn: '3',
+        zone: '',
+      },
+      {
+        tmstmp: '20240120 20:26',
+        typ: 'A',
+        stpnm: 'Addison & Lakewood',
+        stpid: '12557',
+        vid: '1408',
+        dstp: 10603,
+        rt: '152',
+        rtdd: '152',
+        rtdir: 'Westbound',
+        des: 'Cumberland',
+        prdtm: '20240120 20:54',
+        tablockid: '152 -406',
+        tatripid: '88355270',
+        origtatripno: '251994148',
+        dly: false,
+        prdctdn: '27',
+        zone: '',
+      },
+    ],
   },
+};
+
+const mockBusFetch = () => fetchMock.mockGlobal().get(
+  'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&format=json&top=5',
+  busData,
+);
+
+const mockBusFetchNoTop = () => fetchMock.mockGlobal().get(
+  'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&format=json',
+  busData,
 );
 
 const mockBusFetchNoService = () => fetchMock.mockGlobal().get(
-  'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
+  'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&format=json&top=5',
   {
     'bustime-response': {
       error: [
@@ -298,52 +305,54 @@ describe('socketNotificationReceived', () => {
   });
 
   describe('passed proper bus config', () => {
-    beforeEach(() => {
-      mockBusFetch(fetch);
+    describe('minimumArrivalTime is not set', () => {
+      beforeEach(() => {
+        mockBusFetch();
 
-      helper.socketNotificationReceived('MMM-CTA-FETCH', {
-        trainApiKey: null,
-        busApiKey: 'BUS_API_KEY',
-        maxResultsTrain: 5,
-        maxResultsBus: 5,
-        stops: [{
-          type: 'bus',
-          id: '1234',
-          name: 'Mock Stop',
-        }],
+        helper.socketNotificationReceived('MMM-CTA-FETCH', {
+          trainApiKey: null,
+          busApiKey: 'BUS_API_KEY',
+          maxResultsTrain: 5,
+          maxResultsBus: 5,
+          stops: [{
+            type: 'bus',
+            id: '1234',
+            name: 'Mock Stop',
+          }],
+        });
       });
-    });
 
-    it('calls bus API with passed arguments', () => {
-      expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
-        'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
-      );
-    });
+      it('calls bus API with passed arguments', () => {
+        expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
+          'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&format=json&top=5',
+        );
+      });
 
-    it('sends data to client', () => {
-      expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
-        stops: [{
-          type: 'bus',
-          name: 'Mock Stop',
-          arrivals: [
-            {
-              route: '152',
-              direction: 'Westbound',
-              arrival: '3',
-            },
-            {
-              route: '152',
-              direction: 'Westbound',
-              arrival: '27',
-            },
-          ],
-        }],
+      it('sends data to client', () => {
+        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+          stops: [{
+            type: 'bus',
+            name: 'Mock Stop',
+            arrivals: [
+              {
+                route: '152',
+                direction: 'Westbound',
+                arrival: '3',
+              },
+              {
+                route: '152',
+                direction: 'Westbound',
+                arrival: '27',
+              },
+            ],
+          }],
+        });
       });
     });
 
     describe('minimumArrivalTime is set', () => {
       beforeEach(() => {
-        mockBusFetch(fetch);
+        mockBusFetchNoTop();
 
         helper.socketNotificationReceived('MMM-CTA-FETCH', {
           trainApiKey: null,
@@ -357,6 +366,12 @@ describe('socketNotificationReceived', () => {
             minimumArrivalTime: 240000,
           }],
         });
+      });
+
+      it('calls bus API without top parameter', () => {
+        expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
+          'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&format=json',
+        );
       });
 
       it('sends data to client', () => {
@@ -408,7 +423,7 @@ describe('socketNotificationReceived', () => {
       );
 
       expect(fetchMock.callHistory.callLogs[1].args[0]).toBe(
-        'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&top=5&format=json',
+        'http://www.ctabustracker.com/bustime/api/v2/getpredictions?key=BUS_API_KEY&stpid=1234&format=json&top=5',
       );
     });
 

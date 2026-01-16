@@ -59,7 +59,11 @@ module.exports = NodeHelper.create({
   },
 
   async getBusData (id, maxResults, apiKey, minimumArrivalTime) {
-    const response = await fetch(this.busUrl(id, maxResults, apiKey));
+    const response = await fetch(this.busUrl({
+      id,
+      apiKey,
+      maxResults: minimumArrivalTime > 0 ? null : maxResults,
+    }));
     const { 'bustime-response': data } = await response.json();
     const minimumArrivalTimeMinutes = minimumArrivalTime / 1000 / 60;
 
@@ -117,10 +121,16 @@ module.exports = NodeHelper.create({
     return valid;
   },
 
-  busUrl (id, maxResults, apiKey) {
+  busUrl ({id, apiKey, maxResults = null}) {
     const baseUrl = 'http://www.ctabustracker.com/bustime/api/v2/getpredictions';
 
-    return `${baseUrl}?key=${apiKey}&stpid=${id}&top=${maxResults}&format=json`;
+    let query = `?key=${apiKey}&stpid=${id}&format=json`;
+
+    if (maxResults) {
+      query += `&top=${maxResults}`;
+    }
+
+    return `${baseUrl}${query}`;
   },
 
   trainUrl ({id, apiKey, maxResults = null}) {
