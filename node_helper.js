@@ -77,7 +77,11 @@ module.exports = NodeHelper.create({
   },
 
   async getTrainData (id, maxResults, apiKey, minimumArrivalTime) {
-    const response = await fetch(this.trainUrl(id, maxResults, apiKey));
+    const response = await fetch(this.trainUrl({
+      id,
+      apiKey,
+      maxResults: minimumArrivalTime > 0 ? null : maxResults,
+    }));
     const { ctatt: data } = await response.json();
 
     if (!data?.eta) {
@@ -92,7 +96,7 @@ module.exports = NodeHelper.create({
       direction: train.destNm,
       routeColor: this.routeToColor(train.rt),
       time: new Date(train.arrT),
-    }));
+    })).slice(0, maxResults);
   },
 
   validate (payload) {
@@ -119,10 +123,16 @@ module.exports = NodeHelper.create({
     return `${baseUrl}?key=${apiKey}&stpid=${id}&top=${maxResults}&format=json`;
   },
 
-  trainUrl (id, maxResults, apiKey) {
+  trainUrl ({id, apiKey, maxResults = null}) {
     const baseUrl = 'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx';
 
-    return `${baseUrl}?key=${apiKey}&mapid=${id}&max=${maxResults}&outputType=json`; // eslint-disable-line @stylistic/max-len
+    let query = `?key=${apiKey}&mapid=${id}&outputType=json`;
+
+    if (maxResults) {
+      query += `&max=${maxResults}`;
+    }
+
+    return baseUrl + query;
   },
 
   routeToColor (route) {

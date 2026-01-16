@@ -74,60 +74,64 @@ const mockBusFetchNoService = () => fetchMock.mockGlobal().get(
     },
   },
 );
-
-const mockTrainFetch = () => fetchMock.mockGlobal().get(
-  'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
-  {
-    ctatt: {
-      tmst: '2024-01-20T21:23:30',
-      errCd: '0',
-      errNm: null,
-      eta: [
-        {
-          staId: '41420',
-          stpId: '30274',
-          staNm: 'Addison',
-          stpDe: 'Service toward 95th/Dan Ryan',
-          rn: '826',
-          rt: 'Red',
-          destSt: '30089',
-          destNm: '95th/Dan Ryan',
-          trDr: '5',
-          prdt: '2024-01-20T21:20:20',
-          arrT: '2024-01-20T21:28:20',
-          isApp: '0',
-          isSch: '0',
-          isDly: '0',
-          isFlt: '0',
-          flags: null,
-          lat: '41.97345',
-          lon: '-87.65853',
-          heading: '178',
-        },
-        {
-          staId: '41420',
-          stpId: '30273',
-          staNm: 'Addison',
-          stpDe: 'Service toward Howard',
-          rn: '922',
-          rt: 'G',
-          destSt: '30173',
-          destNm: 'Howard',
-          trDr: '1',
-          prdt: '2024-01-20T21:20:03',
-          arrT: '2024-01-20T21:32:03',
-          isApp: '0',
-          isSch: '0',
-          isDly: '0',
-          isFlt: '0',
-          flags: null,
-          lat: '41.90394',
-          lon: '-87.62893',
-          heading: '273',
-        },
-      ],
-    },
+const trainData = {
+  ctatt: {
+    tmst: '2024-01-20T21:23:30',
+    errCd: '0',
+    errNm: null,
+    eta: [
+      {
+        staId: '41420',
+        stpId: '30274',
+        staNm: 'Addison',
+        stpDe: 'Service toward 95th/Dan Ryan',
+        rn: '826',
+        rt: 'Red',
+        destSt: '30089',
+        destNm: '95th/Dan Ryan',
+        trDr: '5',
+        prdt: '2024-01-20T21:20:20',
+        arrT: '2024-01-20T21:28:20',
+        isApp: '0',
+        isSch: '0',
+        isDly: '0',
+        isFlt: '0',
+        flags: null,
+        lat: '41.97345',
+        lon: '-87.65853',
+        heading: '178',
+      },
+      {
+        staId: '41420',
+        stpId: '30273',
+        staNm: 'Addison',
+        stpDe: 'Service toward Howard',
+        rn: '922',
+        rt: 'G',
+        destSt: '30173',
+        destNm: 'Howard',
+        trDr: '1',
+        prdt: '2024-01-20T21:20:03',
+        arrT: '2024-01-20T21:32:03',
+        isApp: '0',
+        isSch: '0',
+        isDly: '0',
+        isFlt: '0',
+        flags: null,
+        lat: '41.90394',
+        lon: '-87.62893',
+        heading: '273',
+      },
+    ],
   },
+};
+const mockTrainFetch = () => fetchMock.mockGlobal().get(
+  'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&outputType=json&max=5',
+  trainData,
+);
+const mockTrainFetchNoMax = () => fetchMock.mockGlobal().get(
+  'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&outputType=json',
+  trainData,
 );
 
 let helper;
@@ -149,53 +153,55 @@ describe('socketNotificationReceived', () => {
   });
 
   describe('passed proper train config', () => {
-    beforeEach(() => {
-      mockTrainFetch();
+    describe('minimumArrivalTime is not set', () => {
+      beforeEach(() => {
+        mockTrainFetch();
 
-      helper.socketNotificationReceived('MMM-CTA-FETCH', {
-        trainApiKey: 'TRAIN_API_KEY',
-        busApiKey: null,
-        maxResultsTrain: 5,
-        maxResultsBus: 5,
-        stops: [{
-          type: 'train',
-          id: '1234',
-          name: 'Mock Stop',
-        }],
+        helper.socketNotificationReceived('MMM-CTA-FETCH', {
+          trainApiKey: 'TRAIN_API_KEY',
+          busApiKey: null,
+          maxResultsTrain: 5,
+          maxResultsBus: 5,
+          stops: [{
+            type: 'train',
+            id: '1234',
+            name: 'Mock Stop',
+          }],
+        });
       });
-    });
 
-    it('calls train API with passed arguments', () => {
-      expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
-        'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
-      );
-    });
+      it('calls train API with passed arguments', () => {
+        expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
+          'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&outputType=json&max=5',
+        );
+      });
 
-    it('sends data to client', () => {
-      expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
-        stops: [{
-          type: 'train',
-          name: 'Mock Stop',
-          arrivals: [
-            {
-              direction: '95th/Dan Ryan',
-              time: new Date('2024-01-20T21:28:20'),
-              routeColor: 'red',
-            },
-            {
-              direction: 'Howard',
-              time: new Date('2024-01-20T21:32:03'),
-              routeColor: 'green',
-            },
-          ],
-        }],
+      it('sends data to client', () => {
+        expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
+          stops: [{
+            type: 'train',
+            name: 'Mock Stop',
+            arrivals: [
+              {
+                direction: '95th/Dan Ryan',
+                time: new Date('2024-01-20T21:28:20'),
+                routeColor: 'red',
+              },
+              {
+                direction: 'Howard',
+                time: new Date('2024-01-20T21:32:03'),
+                routeColor: 'green',
+              },
+            ],
+          }],
+        });
       });
     });
 
     describe('minimumArrivalTime is set', () => {
       beforeEach(() => {
-        mockTrainFetch();
-  
+        mockTrainFetchNoMax();
+
         helper.socketNotificationReceived('MMM-CTA-FETCH', {
           trainApiKey: 'TRAIN_API_KEY',
           busApiKey: null,
@@ -208,6 +214,12 @@ describe('socketNotificationReceived', () => {
             minimumArrivalTime: 120000,
           }],
         });
+      });
+
+      it('does not include max parameter in api call', () => {
+        expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
+          'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&outputType=json',
+        );
       });
 
       it('sends data to client', () => {
@@ -275,7 +287,7 @@ describe('socketNotificationReceived', () => {
     describe('minimumArrivalTime is set', () => {
       beforeEach(() => {
         mockBusFetch(fetch);
-  
+
         helper.socketNotificationReceived('MMM-CTA-FETCH', {
           trainApiKey: null,
           busApiKey: 'BUS_API_KEY',
@@ -335,7 +347,7 @@ describe('socketNotificationReceived', () => {
 
     it('calls bus API with passed arguments', () => {
       expect(fetchMock.callHistory.callLogs[0].args[0]).toBe(
-        'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&max=5&outputType=json',
+        'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=TRAIN_API_KEY&mapid=1234&outputType=json&max=5',
       );
 
       expect(fetchMock.callHistory.callLogs[1].args[0]).toBe(
