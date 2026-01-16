@@ -122,27 +122,25 @@ module.exports = NodeHelper.create({
   },
 
   busUrl ({id, apiKey, maxResults = null}) {
-    const baseUrl = 'http://www.ctabustracker.com/bustime/api/v2/getpredictions';
+    const params = new URLSearchParams({
+      key: apiKey,
+      stpid: id,
+      format: 'json',
+      ...(maxResults && { top: maxResults }),
+    });
 
-    let query = `?key=${apiKey}&stpid=${id}&format=json`;
-
-    if (maxResults) {
-      query += `&top=${maxResults}`;
-    }
-
-    return `${baseUrl}${query}`;
+    return `http://www.ctabustracker.com/bustime/api/v2/getpredictions?${params.toString()}`;
   },
 
   trainUrl ({id, apiKey, maxResults = null}) {
-    const baseUrl = 'http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx';
+    const params = new URLSearchParams({
+      key: apiKey,
+      mapid: id,
+      outputType: 'json',
+      ...(maxResults && { max: maxResults }),
+    });
 
-    let query = `?key=${apiKey}&mapid=${id}&outputType=json`;
-
-    if (maxResults) {
-      query += `&max=${maxResults}`;
-    }
-
-    return baseUrl + query;
+    return `http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?${params.toString()}`;
   },
 
   routeToColor (route) {
