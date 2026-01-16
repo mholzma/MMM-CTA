@@ -122,6 +122,48 @@ const trainData = {
         lon: '-87.62893',
         heading: '273',
       },
+      {
+        staId: '41420',
+        stpId: '30273',
+        staNm: 'Addison',
+        stpDe: 'Service toward Howard',
+        rn: '922',
+        rt: 'G',
+        destSt: '30173',
+        destNm: 'Howard',
+        trDr: '1',
+        prdt: '2024-01-20T21:20:03',
+        arrT: '2024-01-20T21:36:03',
+        isApp: '0',
+        isSch: '0',
+        isDly: '0',
+        isFlt: '0',
+        flags: null,
+        lat: '41.90394',
+        lon: '-87.62893',
+        heading: '273',
+      },
+      {
+        staId: '41420',
+        stpId: '30273',
+        staNm: 'Addison',
+        stpDe: 'Service toward 95th/Dan Ryan',
+        rn: '922',
+        rt: 'G',
+        destSt: '30089',
+        destNm: '95th/Dan Ryan',
+        trDr: '1',
+        prdt: '2024-01-20T21:20:03',
+        arrT: '2024-01-20T21:40:03',
+        isApp: '0',
+        isSch: '0',
+        isDly: '0',
+        isFlt: '0',
+        flags: null,
+        lat: '41.90394',
+        lon: '-87.62893',
+        heading: '273',
+      },
     ],
   },
 };
@@ -192,6 +234,16 @@ describe('socketNotificationReceived', () => {
                 time: new Date('2024-01-20T21:32:03'),
                 routeColor: 'green',
               },
+              {
+                direction: 'Howard',
+                time: new Date('2024-01-20T21:36:03'),
+                routeColor: 'green',
+              },
+              {
+                direction: '95th/Dan Ryan',
+                time: new Date('2024-01-20T21:40:03'),
+                routeColor: 'green',
+              },
             ],
           }],
         });
@@ -205,7 +257,7 @@ describe('socketNotificationReceived', () => {
         helper.socketNotificationReceived('MMM-CTA-FETCH', {
           trainApiKey: 'TRAIN_API_KEY',
           busApiKey: null,
-          maxResultsTrain: 5,
+          maxResultsTrain: 2, // Not included in API, but still applied
           maxResultsBus: 5,
           stops: [{
             type: 'train',
@@ -222,7 +274,7 @@ describe('socketNotificationReceived', () => {
         );
       });
 
-      it('sends data to client', () => {
+      it('sends data to client, filtered and still truncated', () => {
         expect(helper.sendSocketNotification).toHaveBeenCalledWith('MMM-CTA-DATA', {
           stops: [{
             type: 'train',
@@ -231,6 +283,11 @@ describe('socketNotificationReceived', () => {
               {
                 direction: 'Howard',
                 time: new Date('2024-01-20T21:32:03'),
+                routeColor: 'green',
+              },
+              {
+                direction: 'Howard',
+                time: new Date('2024-01-20T21:36:03'),
                 routeColor: 'green',
               },
             ],
@@ -370,6 +427,16 @@ describe('socketNotificationReceived', () => {
               {
                 direction: 'Howard',
                 time: new Date('2024-01-20T21:32:03'),
+                routeColor: 'green',
+              },
+              {
+                direction: 'Howard',
+                time: new Date('2024-01-20T21:36:03'),
+                routeColor: 'green',
+              },
+              {
+                direction: '95th/Dan Ryan',
+                time: new Date('2024-01-20T21:40:03'),
                 routeColor: 'green',
               },
             ],
